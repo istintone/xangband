@@ -75,6 +75,22 @@
 
 ## v0.8 (作業中) — M5 (均衡と仕上げ)
 
+### 公開準備 ― README とリポジトリ
+
+- [文書] README を現状に合わせて書き直した。
+  「設計フェーズ + M3a 完了」「次の一手: M0 から着手」のままだった。
+  実数を `src/data/*.json` から拾い直し、操作表に `Space`(文脈アクション) /
+  `Tab` / `V` / `J` / `=` / `\` を追加。docs/11 へのリンクが抜けていたのも補った
+- [追加] **`.gitattributes`** で改行を LF に固定。
+  生成物は `newline="
+"` で書くのに、Windows の `core.autocrlf=true` で
+  クローンすると作業コピーが CRLF になり、**改行だけの差で
+  `python build.py --check` が常に失敗する**。環境で結果が変わらないよう固定した。
+  生成物 3群に `linguist-generated` も付けた
+- [検証] 別の場所にクローンして検査一式を通した。
+  `build.py --check` / run 177 / check_code 4 / check_docs 10 すべて成功
+
+
 ### 公開準備 ― ライセンス ([[D-96]])
 
 - [追加] **[LICENSE](LICENSE)** ―― GNU GPL v2 全文(gnu.org の正典、338行、
