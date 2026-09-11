@@ -1,0 +1,314 @@
+/* STRATA — GNU GPL v2. 条文は LICENSE、由来は NOTICE.md。 */
+/* console.css — 枠外UI のコンソール意匠。docs/09 §9.16 ([[D-82]])。
+ *
+ * 左右のパネルと中央下部は、SF でいうコンソール / HUD / PipBoy そのもの。
+ * そう見せる ―― ただし**読みやすさが先**([[D-52]])。
+ *
+ * 走査線と発光は --crt で強度を持つ。
+ * 高コントラスト配色では theme.js が 0 にする ([[D-79]] の延長)。
+ * 色は必ず変数経由。パレット差し替えが効かなくなるため。 */
+
+:root {
+  --crt: 1;                      /* 意匠の強度 0..1。0 で走査線と発光が消える */
+  --notch: 10px;                 /* 角の切り欠き */
+  /* 中央下部の高さ。端末の縦を削るので控えめにする ―― 端末が本体 */
+  --con-h: clamp(5.5rem, 17vh, 10rem);
+}
+
+/* --- 中央列: 端末 + コンソール --- */
+#center {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--frame);
+}
+
+#console {
+  flex: 0 0 var(--con-h);
+  min-height: 0;
+  display: flex;
+  gap: 1px;
+  background: var(--frame);
+}
+
+.con {
+  flex: 1 1 0;
+  min-width: 0;
+  /* 長い一続きの文でも必ず折り返す。折り返さないと右端で切れる */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  background: var(--panel);
+  padding: 5px 9px 6px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-size: calc(12px * var(--ui-scale));
+  line-height: 1.45;
+  user-select: text;
+  position: relative;
+}
+
+/* --- 共通の意匠: 走査線と角の切り欠き --- */
+.side, .con {
+  clip-path: polygon(
+    var(--notch) 0, 100% 0, 100% calc(100% - var(--notch)),
+    calc(100% - var(--notch)) 100%, 0 100%, 0 var(--notch)
+  );
+}
+
+.side::before, .con::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, calc(.030 * var(--crt))) 0 1px,
+    transparent 1px 3px
+  );
+}
+.side { position: relative; }
+
+/* --- 見出し --- */
+.p-title {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  text-shadow: 0 0 calc(6px * var(--crt)) currentColor;
+}
+.p-title::before { content: "▚"; opacity: .8; }
+.p-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--accent), transparent);
+  opacity: .55;
+}
+
+.p-group h3, .l-sec h3, .con h3 {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.p-group h3::before, .l-sec h3::before, .con h3::before {
+  content: "▸";
+  opacity: .7;
+}
+.p-group h3::after, .l-sec h3::after, .con h3::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--frame);
+}
+
+/* --- 中身は走査線より上に --- */
+.side > *, .con > * { position: relative; z-index: 2; }
+
+/* --- 操作ボタン: コンソールのキーらしく --- */
+.p-cmd {
+  border-left: 2px solid transparent;
+  border-radius: 0 3px 3px 0;
+}
+.p-cmd:hover:not(:disabled) { border-left-color: var(--accent); }
+.p-key { text-shadow: 0 0 calc(5px * var(--crt)) currentColor; }
+
+/* --- HUD のグリフを光らせる --- */
+.l-glyph { text-shadow: 0 0 calc(6px * var(--crt)) currentColor; }
+
+/* --- ガイド: 押せる行動 ([[D-85]]) --- */
+#guide .g-act {
+  /* p-cmd と同じ組み。キー / ラベル / 理由 の3列で、理由は折り返す */
+  display: grid;
+  grid-template-columns: 3.6em 1fr;
+  align-items: baseline;
+  column-gap: 6px;
+  width: 100%;
+  text-align: left;
+  background: var(--panel2);
+  color: var(--ink);
+  border: 1px solid transparent;
+  border-left: 2px solid var(--dim);
+  border-radius: 0 3px 3px 0;
+  padding: 2px 7px;
+  margin-bottom: 2px;
+  font: inherit;
+  line-height: 1.35;
+  cursor: pointer;
+}
+#guide .g-act:hover { background: #16222f; border-color: var(--accent); }
+#guide .g-act:active { background: #1d2c3c; }
+#guide .g-key {
+  color: var(--warn);
+  text-shadow: 0 0 calc(5px * var(--crt)) currentColor;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#guide .g-label { font-weight: bold; }
+#guide .g-why {
+  grid-column: 2;
+  color: var(--dim);
+  font-size: calc(10px * var(--ui-scale));
+  line-height: 1.25;
+}
+#guide .g-act.l-danger { border-left-color: var(--danger); }
+#guide .g-act.l-warn   { border-left-color: var(--warn); }
+#guide .g-act.l-tip    { border-left-color: var(--tip); }
+#guide .g-act.l-info   { border-left-color: var(--dim); }
+
+/* --- ガイド: 助言 (押せない) --- */
+#guide .g-hint {
+  border-left: 2px solid var(--dim);
+  padding: 3px 7px;
+  margin-bottom: 3px;
+  background: var(--panel2);
+  border-radius: 0 3px 3px 0;
+}
+#guide .l-danger { border-left-color: var(--danger); color: #e2a49c; }
+#guide .l-warn   { border-left-color: var(--warn);   color: #e0cb95; }
+#guide .l-tip    { border-left-color: var(--tip);    color: #9fd4d7; }
+#guide .l-info   { border-left-color: var(--frame);  color: var(--ink); }
+
+/* --- メッセージ履歴 (中央下部・右) --- */
+#log .m-row {
+  padding: 1px 2px 1px 10px;
+  text-indent: -8px;
+  color: var(--dim);
+}
+#log .m-row::before { content: "› "; opacity: .5; }
+#log .m-new { color: var(--ink); }
+#log .m-count { color: var(--accent); }
+
+/* --- 表示量の3段 ([[D-83]]) --- */
+#app.ui-slim .side { display: none; }
+#app.ui-bare .side { display: none; }
+#app.ui-bare #console { display: none; }
+
+#toggle {
+  letter-spacing: 1px;
+  text-shadow: 0 0 calc(5px * var(--crt)) currentColor;
+}
+
+/* 縦が狭い画面では更に詰める。端末の高さが先に犠牲になってはいけない */
+@media (max-height: 820px) {
+  :root { --con-h: clamp(4.5rem, 14vh, 7rem); }
+}
+
+/* 横長で背が低い画面(スマホ横・小型タブレット横)は、
+   コンソールを**端末の下ではなく右**に置く。
+   端末は40行あるので、縦を削ると一気に読めなくなる ([[D-87]])。 */
+@media (max-height: 560px) and (min-width: 700px) {
+  #center { flex-direction: row; }
+  #console {
+    flex: 0 0 34%;
+    flex-direction: column;
+    height: auto;
+    width: auto;
+    min-width: 0;
+  }
+  .con { min-height: 0; }
+}
+
+/* ================= 縦積み (タブレット・携帯) ([[D-87]]) =================
+ *
+ * **判断は画面幅だけで決める。** 端末の都合を CSS に戻さない ――
+ * 戻すと「クラスがレイアウトを変え、レイアウトが測定を変え、測定がクラスを変える」
+ * 循環になり、タブレットで端末のサイドバーと要約札が同時に出た。
+ *
+ * 縦積みのときは端末のサイドバーを必ず畳む(term.js が同じ幅を見る)。
+ * その16桁はマップに回り、状態は下の要約札が受け持つ。 */
+
+.l-strip { display: none; }
+.l-chip { white-space: nowrap; flex: 0 0 auto; }
+.l-chip-k { color: var(--dim); margin-right: 4px; }
+.l-chip-v { font-weight: bold; }
+
+@media (max-width: 900px) {
+  #app {
+    flex-direction: column;
+    gap: 1px;
+    /* 縦積みでは、どの子も画面幅を超えてはいけない。
+       超えると #stage の実測が画面より広くなり、fit() が桁数を読み違える。 */
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  #center, #legend, #console, #stage, .con {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* 左の操作パネルは畳む。指で遊ぶならガイドのボタンとタップ移動で足りる */
+  #cmdpanel { display: none; }
+
+  /* 並び: HUD要約 → 端末 → ガイド/記録。
+     状態は上、操作は親指の届く下。#console は #center の子なので
+     order では #legend と並べ替えられない ―― #legend 側を上へ出す。 */
+  #center { flex: 1 1 auto; min-height: 0; order: 2; }
+
+  /* **端末が状態を出していないので、HUD は必ず出す。**
+     簡易表示(ui-slim)より優先する ―― 消していいのは ui-bare だけ。 */
+  #legend, #app.ui-slim #legend {
+    display: block;
+    flex: 0 0 auto;
+    max-height: 22vh;
+    order: 1;
+    padding: 3px 8px;
+    /* 角の切り欠き(10px)は高さ20px ほどの帯をほとんど削る。
+       背の低い帯では意匠より中身を優先する ([[D-52]] と同じ考え方)。 */
+    clip-path: none;
+    border-bottom: 1px solid var(--frame);
+  }
+  #app.ui-bare #legend { display: none; }
+
+  #legend .p-title { display: none; }
+  #legend .l-body { display: none; }
+  #legend .l-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    padding: 1px 0;
+  }
+
+  /* 中央下部は縦に積む。横2列だと1列あたりが狭すぎる。
+     端末より先にここの高さを確保する ―― 押すものが見えないと遊べない。 */
+  #console {
+    flex: 0 0 auto;
+    flex-direction: column;
+    height: 32vh;
+  }
+  #guide { flex: 1 1 60%; }
+  #log   { flex: 1 1 40%; }
+
+  /* 指で押せる大きさにする */
+  #guide .g-act { padding: 7px 9px; margin-bottom: 4px; }
+  #guide .g-label { font-size: calc(13px * var(--ui-scale)); }
+}
+
+/* 縦が狭い画面では中央下部を詰める。端末の高さが先に犠牲になってはいけない */
+@media (max-height: 820px) {
+  :root { --con-h: clamp(4.5rem, 14vh, 7rem); }
+}
+
+/* 横長で背が低い画面(スマホ横・小型タブレット横)は、
+   コンソールを**端末の下ではなく右**に置く。
+   端末は40行あるので、縦を削ると一気に読めなくなる ([[D-87]])。 */
+@media (max-height: 560px) and (min-width: 700px) {
+  #center { flex-direction: row; }
+  #console {
+    flex: 0 0 34%;
+    flex-direction: column;
+    height: auto;
+    width: auto;
+    min-width: 0;
+  }
+  .con { min-height: 0; }
+}

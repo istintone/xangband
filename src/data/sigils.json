@@ -1,0 +1,343 @@
+{
+  "_comment": [
+    "刻印 (docs/02 §2.8)。本家のルーンに対応。装備の性質を分解する単位。",
+    "刻印を1つ知ると、以後すべての装備でその刻印が既知になる。",
+    "learn … 判明の経路: wear 装備する / hit 発動する / hurt 被弾する / analyze 解析のみ",
+    "kind  … stat 能力値 / resist 耐性 / brand 属性付与 / slay 系統特効 / misc その他",
+    "value … 表示と価格に使う重み。負の刻印(汚染ファーム)は taint: true。"
+  ],
+  "entries": [
+    {
+      "id": "s-str",
+      "name": "膂力",
+      "kind": "stat",
+      "stat": "str",
+      "learn": "wear",
+      "value": 300,
+      "spoiler": 1
+    },
+    {
+      "id": "s-int",
+      "name": "演算",
+      "kind": "stat",
+      "stat": "int",
+      "learn": "wear",
+      "value": 300,
+      "spoiler": 1
+    },
+    {
+      "id": "s-wis",
+      "name": "意志",
+      "kind": "stat",
+      "stat": "wis",
+      "learn": "wear",
+      "value": 300,
+      "spoiler": 1
+    },
+    {
+      "id": "s-dex",
+      "name": "反射",
+      "kind": "stat",
+      "stat": "dex",
+      "learn": "wear",
+      "value": 300,
+      "spoiler": 1
+    },
+    {
+      "id": "s-con",
+      "name": "耐久",
+      "kind": "stat",
+      "stat": "con",
+      "learn": "wear",
+      "value": 300,
+      "spoiler": 1
+    },
+    {
+      "id": "s-chr",
+      "name": "統率",
+      "kind": "stat",
+      "stat": "chr",
+      "learn": "wear",
+      "value": 200,
+      "spoiler": 1
+    },
+    {
+      "id": "s-speed",
+      "name": "加速",
+      "kind": "misc",
+      "attr": "speed",
+      "learn": "wear",
+      "value": 2500,
+      "spoiler": 1,
+      "desc": "速度が上がる。最も価値の高い刻印。"
+    },
+    {
+      "id": "s-seal",
+      "name": "気密",
+      "kind": "misc",
+      "attr": "seal",
+      "learn": "wear",
+      "value": 400,
+      "spoiler": 1
+    },
+    {
+      "id": "s-light",
+      "name": "照射",
+      "kind": "misc",
+      "attr": "light",
+      "learn": "wear",
+      "value": 250,
+      "spoiler": 1
+    },
+    {
+      "id": "s-regen",
+      "name": "再生",
+      "kind": "misc",
+      "attr": "regen",
+      "learn": "wear",
+      "value": 350,
+      "spoiler": 1
+    },
+    {
+      "id": "s-stealth",
+      "name": "遮蔽",
+      "kind": "misc",
+      "attr": "stealth",
+      "learn": "wear",
+      "value": 300,
+      "spoiler": 1
+    },
+    {
+      "id": "s-efficiency",
+      "name": "省電",
+      "kind": "misc",
+      "attr": "efficiency",
+      "learn": "wear",
+      "value": 250,
+      "spoiler": 1,
+      "desc": "セルの消費が減る。"
+    },
+    {
+      "id": "s-freeact",
+      "name": "自律",
+      "kind": "misc",
+      "attr": "freeAction",
+      "learn": "hurt",
+      "value": 800,
+      "spoiler": 1,
+      "desc": "麻痺しない。深く潜るなら必須。"
+    },
+    {
+      "id": "s-seeinvis",
+      "name": "広域視",
+      "kind": "misc",
+      "attr": "seeInvisible",
+      "learn": "wear",
+      "value": 400,
+      "spoiler": 1
+    },
+    {
+      "id": "s-res-fire",
+      "name": "耐熱",
+      "kind": "resist",
+      "element": "fire",
+      "learn": "hurt",
+      "value": 350,
+      "spoiler": 1
+    },
+    {
+      "id": "s-res-cold",
+      "name": "耐寒",
+      "kind": "resist",
+      "element": "cold",
+      "learn": "hurt",
+      "value": 350,
+      "spoiler": 1
+    },
+    {
+      "id": "s-res-elec",
+      "name": "耐電",
+      "kind": "resist",
+      "element": "elec",
+      "learn": "hurt",
+      "value": 350,
+      "spoiler": 1
+    },
+    {
+      "id": "s-res-acid",
+      "name": "耐酸",
+      "kind": "resist",
+      "element": "acid",
+      "learn": "hurt",
+      "value": 350,
+      "spoiler": 1
+    },
+    {
+      "id": "s-res-pois",
+      "name": "耐毒",
+      "kind": "resist",
+      "element": "pois",
+      "learn": "hurt",
+      "value": 500,
+      "spoiler": 1
+    },
+    {
+      "id": "s-res-rad",
+      "name": "耐放射",
+      "kind": "resist",
+      "element": "rad",
+      "learn": "hurt",
+      "value": 600,
+      "spoiler": 1
+    },
+    {
+      "id": "s-res-psi",
+      "name": "精神遮断",
+      "kind": "resist",
+      "element": "psi",
+      "learn": "hurt",
+      "value": 700,
+      "spoiler": 2
+    },
+    {
+      "id": "s-brand-fire",
+      "name": "焼夷",
+      "kind": "brand",
+      "element": "fire",
+      "learn": "hit",
+      "value": 900,
+      "spoiler": 1
+    },
+    {
+      "id": "s-brand-cold",
+      "name": "冷却",
+      "kind": "brand",
+      "element": "cold",
+      "learn": "hit",
+      "value": 900,
+      "spoiler": 1
+    },
+    {
+      "id": "s-brand-elec",
+      "name": "帯電",
+      "kind": "brand",
+      "element": "elec",
+      "learn": "hit",
+      "value": 1000,
+      "spoiler": 1
+    },
+    {
+      "id": "s-brand-acid",
+      "name": "腐食",
+      "kind": "brand",
+      "element": "acid",
+      "learn": "hit",
+      "value": 900,
+      "spoiler": 1
+    },
+    {
+      "id": "s-brand-pois",
+      "name": "毒素",
+      "kind": "brand",
+      "element": "pois",
+      "learn": "hit",
+      "value": 800,
+      "spoiler": 1
+    },
+    {
+      "id": "s-slay-automata",
+      "name": "対機械",
+      "kind": "slay",
+      "base": "automata",
+      "mult": 3,
+      "learn": "hit",
+      "value": 800,
+      "spoiler": 1
+    },
+    {
+      "id": "s-slay-infested",
+      "name": "対感染体",
+      "kind": "slay",
+      "base": "infested",
+      "mult": 3,
+      "learn": "hit",
+      "value": 700,
+      "spoiler": 1
+    },
+    {
+      "id": "s-slay-xeno",
+      "name": "対異星",
+      "kind": "slay",
+      "base": "xeno",
+      "mult": 3,
+      "learn": "hit",
+      "value": 900,
+      "spoiler": 1
+    },
+    {
+      "id": "s-slay-human",
+      "name": "対人",
+      "kind": "slay",
+      "base": "human",
+      "mult": 3,
+      "learn": "hit",
+      "value": 600,
+      "spoiler": 1
+    },
+    {
+      "id": "t-slow",
+      "name": "遅延",
+      "kind": "misc",
+      "attr": "speed",
+      "taint": true,
+      "learn": "wear",
+      "value": -1200,
+      "spoiler": 1,
+      "desc": "汚染ファーム。速度が落ちる。"
+    },
+    {
+      "id": "t-drain",
+      "name": "電力漏出",
+      "kind": "misc",
+      "attr": "drain",
+      "taint": true,
+      "learn": "wear",
+      "value": -500,
+      "spoiler": 1,
+      "desc": "汚染ファーム。セルが少しずつ失われる。"
+    },
+    {
+      "id": "t-fragile",
+      "name": "脆性",
+      "kind": "misc",
+      "attr": "fragile",
+      "taint": true,
+      "learn": "hurt",
+      "value": -400,
+      "spoiler": 1,
+      "desc": "汚染ファーム。受けるダメージが増える。"
+    },
+    {
+      "id": "t-hunger",
+      "name": "代謝亢進",
+      "kind": "misc",
+      "attr": "hunger",
+      "taint": true,
+      "learn": "wear",
+      "value": -300,
+      "spoiler": 1,
+      "desc": "汚染ファーム。消耗が速い。"
+    },
+    {
+      "id": "t-noise",
+      "name": "発信",
+      "kind": "misc",
+      "attr": "noise",
+      "taint": true,
+      "learn": "wear",
+      "value": -600,
+      "spoiler": 1,
+      "desc": "汚染ファーム。位置を発信し続ける。敵に見つかりやすい。"
+    }
+  ]
+}

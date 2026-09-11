@@ -1,0 +1,12 @@
+# 改行は全て LF に固定する。
+#
+# build.py / tools/gen_reference.js は生成物を newline="\n" で書く。
+# Windows の core.autocrlf=true でチェックアウトすると作業コピーが CRLF になり、
+# 生成物と作業コピーが改行だけで食い違って **`python build.py --check` が常に失敗する**。
+# 環境によって結果が変わらないよう、リポジトリ側で固定しておく。
+* text=auto eol=lf
+
+# 生成物であることを GitHub の差分表示と言語統計に伝える
+index.html      linguist-generated=true
+src/js/data-gen.js  linguist-generated=true
+docs/reference/**   linguist-generated=true

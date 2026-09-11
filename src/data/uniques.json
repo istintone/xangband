@@ -1,0 +1,232 @@
+{
+  "_comment": [
+    "固有機材 (docs/02 §2.8, [[D-38]])。本家 artifact.txt に対応。",
+    "1ランに1個しか存在しない。base … 土台になるアイテム種別 (items.json の id)。",
+    "強力なものには汚染ファーム(taint)を同居させ、トレードオフにする ([[D-07]])。"
+  ],
+  "entries": [
+    {
+      "id": "u-first-cut",
+      "name": "《最初の一刀》",
+      "base": "service-knife",
+      "depth": 5,
+      "rarity": 3,
+      "toHit": 8,
+      "toDam": 6,
+      "sigils": [
+        "s-dex",
+        "s-stealth"
+      ],
+      "pval": 2,
+      "cost": 6000,
+      "spoiler": 2,
+      "desc": "断絶の前夜、誰かがこれで隔壁を切って逃げた。刃はまだ欠けていない。"
+    },
+    {
+      "id": "u-quartermaster",
+      "name": "《補給長の外套》",
+      "base": "work-suit",
+      "depth": 8,
+      "rarity": 3,
+      "ac": 14,
+      "sigils": [
+        "s-seal",
+        "s-res-cold",
+        "s-con"
+      ],
+      "pval": 2,
+      "cost": 8000,
+      "spoiler": 2,
+      "desc": "内側に、配給の記録が細かい字で縫い込まれている。最後の日付は空白のままだ。"
+    },
+    {
+      "id": "u-long-watch",
+      "name": "《長い当直》",
+      "base": "helm-lamp",
+      "depth": 12,
+      "rarity": 4,
+      "sigils": [
+        "s-light",
+        "s-seeinvis",
+        "s-efficiency"
+      ],
+      "pval": 2,
+      "cost": 11000,
+      "spoiler": 2,
+      "desc": "誰も来ない交代を待ち続けた灯り。消えたことが一度もない。"
+    },
+    {
+      "id": "u-severance-key",
+      "name": "《断絶の鍵》",
+      "base": "neurallink",
+      "depth": 20,
+      "rarity": 5,
+      "sigils": [
+        "s-int",
+        "s-wis",
+        "s-res-psi",
+        "s-freeact"
+      ],
+      "pval": 3,
+      "cost": 30000,
+      "spoiler": 3,
+      "desc": "何を開けるためのものか、まだ分からない。深く潜るほど熱を持つ。"
+    },
+    {
+      "id": "u-breaker",
+      "name": "《破断者》",
+      "base": "breach-maul",
+      "depth": 25,
+      "rarity": 5,
+      "toHit": 6,
+      "toDam": 22,
+      "sigils": [
+        "s-str",
+        "s-brand-elec",
+        "s-slay-automata"
+      ],
+      "pval": 3,
+      "taint": [
+        "t-hunger"
+      ],
+      "cost": 38000,
+      "spoiler": 3,
+      "desc": "隔壁を破るために作られ、隔壁以外も破ってきた。持つ者を消耗させる。"
+    },
+    {
+      "id": "u-silent-hour",
+      "name": "《無音の一時間》",
+      "base": "vac-suit",
+      "depth": 30,
+      "rarity": 6,
+      "ac": 26,
+      "sigils": [
+        "s-seal",
+        "s-stealth",
+        "s-speed",
+        "s-res-rad"
+      ],
+      "pval": 2,
+      "cost": 55000,
+      "spoiler": 3,
+      "desc": "これを着ていた者は、記録上、一時間だけ誰にも観測されなかった。"
+    },
+    {
+      "id": "u-origin-shard",
+      "name": "《起源の破片》",
+      "base": "power-cell",
+      "depth": 40,
+      "rarity": 8,
+      "sigils": [
+        "s-speed",
+        "s-regen",
+        "s-res-psi",
+        "s-freeact"
+      ],
+      "pval": 4,
+      "taint": [
+        "t-noise"
+      ],
+      "cost": 90000,
+      "spoiler": 3,
+      "desc": "深度100 にあるものと同じ材質でできている。持っていると、向こうから見られている。"
+    },
+    {
+      "id": "u-severance-blade",
+      "name": "《断絶の一振り》",
+      "base": "mono-blade",
+      "depth": 30,
+      "rarity": 4,
+      "cost": 48000,
+      "toHit": 14,
+      "toDam": 14,
+      "pval": 3,
+      "sigils": [
+        "s-dex",
+        "s-brand-cold",
+        "s-res-psi"
+      ],
+      "desc": "断絶の瞬間に振られていた。振った者の記録は残っていない。",
+      "spoiler": 2
+    },
+    {
+      "id": "u-watchers-lens",
+      "name": "《観測者の眼》",
+      "base": "helm-lamp",
+      "depth": 45,
+      "rarity": 5,
+      "cost": 72000,
+      "pval": 4,
+      "sigils": [
+        "s-light",
+        "s-seeinvis",
+        "s-int"
+      ],
+      "taint": [
+        "t-noise"
+      ],
+      "desc": "見えなかったものが見える。見られていることも同時に分かる。",
+      "spoiler": 3
+    },
+    {
+      "id": "u-cultivars-coat",
+      "name": "《培養者の被膜》",
+      "base": "deep-rig",
+      "depth": 58,
+      "rarity": 5,
+      "cost": 110000,
+      "ac": 52,
+      "pval": 3,
+      "sigils": [
+        "s-seal",
+        "s-res-pois",
+        "s-regen",
+        "s-con"
+      ],
+      "taint": [
+        "t-hunger"
+      ],
+      "desc": "培養槽の内張りだったもの。着ると、内側にいることになる。",
+      "spoiler": 3
+    },
+    {
+      "id": "u-custodians-key",
+      "name": "《管理人の鍵》",
+      "base": "deep-link",
+      "depth": 70,
+      "rarity": 6,
+      "cost": 160000,
+      "pval": 4,
+      "sigils": [
+        "s-int",
+        "s-freeact",
+        "s-res-elec",
+        "s-stealth"
+      ],
+      "desc": "尖塔の全ての錠に通る。通した記録が全て残る。",
+      "spoiler": 3
+    },
+    {
+      "id": "u-first-instruction",
+      "name": "《最初の指示》",
+      "base": "phase-lance",
+      "depth": 86,
+      "rarity": 7,
+      "cost": 320000,
+      "toHit": 26,
+      "toDam": 28,
+      "pval": 4,
+      "sigils": [
+        "s-speed",
+        "s-brand-cold",
+        "s-brand-elec",
+        "s-res-rad"
+      ],
+      "taint": [
+        "t-fragile"
+      ],
+      "desc": "工程の一行目。読むと、自分が何をしているのか分からなくなる。",
+      "spoiler": 3
+    }
+  ]
+}

@@ -1,0 +1,347 @@
+{
+  "_comment": [
+    "ロール (docs/03 §3.3)。本家 class.txt に対応。",
+    "system … サブシステム(能力の系統)。null なら能力を持たない。",
+    "spStat … SP と失敗率を支配する主能力値。maxBlows … 攻撃回数の上限。",
+    "skills … 系統ぶんと合算される基礎補正。skillsPerLevel … レベルごとの伸び(1/10単位)。",
+    "abilities … 習得できる能力の id (abilities.json)。",
+    "statOrder … 能力値の優先順位。上位から順に良い値を割り当てる(本家のポイント割り振り相当)",
+    "net / cogBonus … 電脳層 (docs/11 §11.2-11.3)。net は接続の成否、cogBonus は認知の上限に乗る。接続者以外でも使えるが失敗しやすい"
+  ],
+  "entries": [
+    {
+      "id": "marine",
+      "name": "突撃兵",
+      "system": null,
+      "spStat": null,
+      "hitDie": 9,
+      "expFactor": 100,
+      "maxBlows": 5,
+      "skills": {
+        "melee": 34,
+        "shoot": 20,
+        "stealth": 1,
+        "perception": 12,
+        "disarm": 20,
+        "net": 6
+      },
+      "skillsPerLevel": {
+        "melee": 12,
+        "shoot": 8,
+        "stealth": 0,
+        "perception": 3,
+        "disarm": 8,
+        "net": 2
+      },
+      "abilities": [],
+      "desc": "純粋な近接戦闘員。HP が最も高く、能力を一切持たない。装備が全て。",
+      "spoiler": 1,
+      "statOrder": [
+        "str",
+        "con",
+        "dex",
+        "chr",
+        "int",
+        "wis"
+      ],
+      "cogBonus": 0
+    },
+    {
+      "id": "technician",
+      "name": "工作員",
+      "system": "machine",
+      "spStat": "int",
+      "hitDie": 4,
+      "expFactor": 130,
+      "maxBlows": 3,
+      "skills": {
+        "melee": 20,
+        "shoot": 20,
+        "stealth": 2,
+        "perception": 30,
+        "disarm": 40,
+        "net": 30
+      },
+      "skillsPerLevel": {
+        "melee": 7,
+        "shoot": 7,
+        "stealth": 0,
+        "perception": 10,
+        "disarm": 12,
+        "net": 7
+      },
+      "abilities": [
+        "scan-field",
+        "arc-discharge",
+        "repair-field",
+        "override-lock",
+        "drone-decoy",
+        "emp-burst"
+      ],
+      "desc": "機械を読み、書き換える。設備障害を無効化し、装備を現場で直す。",
+      "spoiler": 1,
+      "statOrder": [
+        "int",
+        "dex",
+        "con",
+        "str",
+        "wis",
+        "chr"
+      ],
+      "cogBonus": 3
+    },
+    {
+      "id": "psion",
+      "name": "念導者",
+      "system": "psi",
+      "spStat": "wis",
+      "hitDie": 2,
+      "expFactor": 140,
+      "maxBlows": 2,
+      "skills": {
+        "melee": 14,
+        "shoot": 14,
+        "stealth": 2,
+        "perception": 20,
+        "disarm": 20,
+        "net": 16
+      },
+      "skillsPerLevel": {
+        "melee": 5,
+        "shoot": 5,
+        "stealth": 0,
+        "perception": 8,
+        "disarm": 8,
+        "net": 4
+      },
+      "abilities": [
+        "mind-thrust",
+        "sense-life",
+        "phase-shift",
+        "terrify",
+        "kinetic-crush",
+        "mind-wipe"
+      ],
+      "desc": "装備が乏しくても戦える。遠くから削り、精神を折る。打たれ弱い。",
+      "spoiler": 1,
+      "statOrder": [
+        "wis",
+        "con",
+        "int",
+        "dex",
+        "chr",
+        "str"
+      ],
+      "cogBonus": 3
+    },
+    {
+      "id": "xenobiologist",
+      "name": "異種生物学者",
+      "system": "bio",
+      "spStat": "wis",
+      "hitDie": 4,
+      "expFactor": 125,
+      "maxBlows": 3,
+      "skills": {
+        "melee": 22,
+        "shoot": 18,
+        "stealth": 2,
+        "perception": 24,
+        "disarm": 22,
+        "net": 10
+      },
+      "skillsPerLevel": {
+        "melee": 8,
+        "shoot": 6,
+        "stealth": 0,
+        "perception": 9,
+        "disarm": 8,
+        "net": 3
+      },
+      "abilities": [
+        "stabilize",
+        "toxin-lance",
+        "analyze-organism",
+        "purge-taint",
+        "adrenal-surge",
+        "regenerate"
+      ],
+      "desc": "毒と汚染を運用し、傷を塞ぐ。敵の解析が速く、弱点を先に見つける。",
+      "spoiler": 1,
+      "statOrder": [
+        "wis",
+        "int",
+        "con",
+        "dex",
+        "str",
+        "chr"
+      ],
+      "cogBonus": 1
+    },
+    {
+      "id": "ghost",
+      "name": "潜行者",
+      "system": "machine",
+      "spStat": "int",
+      "hitDie": 6,
+      "expFactor": 120,
+      "maxBlows": 4,
+      "skills": {
+        "melee": 28,
+        "shoot": 28,
+        "stealth": 5,
+        "perception": 36,
+        "disarm": 45,
+        "net": 24
+      },
+      "skillsPerLevel": {
+        "melee": 10,
+        "shoot": 10,
+        "stealth": 0,
+        "perception": 12,
+        "disarm": 14,
+        "net": 6
+      },
+      "abilities": [
+        "scan-field",
+        "micro-jump",
+        "override-lock",
+        "drone-decoy"
+      ],
+      "desc": "隠れ、不意を打ち、逃げる。解錠と知覚に長け、正面からは戦わない。",
+      "spoiler": 1,
+      "statOrder": [
+        "dex",
+        "int",
+        "con",
+        "str",
+        "chr",
+        "wis"
+      ],
+      "cogBonus": 2
+    },
+    {
+      "id": "marksman",
+      "name": "狙撃手",
+      "system": null,
+      "spStat": null,
+      "hitDie": 7,
+      "expFactor": 115,
+      "maxBlows": 3,
+      "skills": {
+        "melee": 24,
+        "shoot": 40,
+        "stealth": 3,
+        "perception": 24,
+        "disarm": 24,
+        "net": 10
+      },
+      "skillsPerLevel": {
+        "melee": 8,
+        "shoot": 16,
+        "stealth": 0,
+        "perception": 8,
+        "disarm": 8,
+        "net": 3
+      },
+      "abilities": [],
+      "desc": "射出器に特化する。射程と倍率で、届く前に終わらせる。",
+      "spoiler": 1,
+      "statOrder": [
+        "dex",
+        "str",
+        "con",
+        "int",
+        "wis",
+        "chr"
+      ],
+      "cogBonus": 1
+    },
+    {
+      "id": "scavenger",
+      "name": "回収屋",
+      "system": "machine",
+      "spStat": "int",
+      "hitDie": 7,
+      "expFactor": 110,
+      "maxBlows": 3,
+      "skills": {
+        "melee": 26,
+        "shoot": 24,
+        "stealth": 2,
+        "perception": 30,
+        "disarm": 30,
+        "net": 18
+      },
+      "skillsPerLevel": {
+        "melee": 9,
+        "shoot": 8,
+        "stealth": 0,
+        "perception": 10,
+        "disarm": 10,
+        "net": 5
+      },
+      "abilities": [
+        "scan-field",
+        "repair-field",
+        "override-lock"
+      ],
+      "desc": "拾い、解体し、売る。取引価格が良く、ジャンクから部品を多く取れる。",
+      "spoiler": 1,
+      "statOrder": [
+        "chr",
+        "con",
+        "int",
+        "str",
+        "dex",
+        "wis"
+      ],
+      "cogBonus": 2
+    },
+    {
+      "id": "netrunner",
+      "name": "接続者",
+      "system": "machine",
+      "spStat": "int",
+      "hitDie": 3,
+      "expFactor": 135,
+      "maxBlows": 2,
+      "skills": {
+        "melee": 12,
+        "shoot": 16,
+        "stealth": 3,
+        "perception": 34,
+        "disarm": 38,
+        "net": 55
+      },
+      "skillsPerLevel": {
+        "melee": 5,
+        "shoot": 6,
+        "stealth": 0,
+        "perception": 12,
+        "disarm": 12,
+        "net": 12
+      },
+      "abilities": [
+        "scan-field",
+        "arc-discharge",
+        "field-jack",
+        "override-lock",
+        "emp-burst",
+        "drone-decoy",
+        "system-crash"
+      ],
+      "desc": "電脳層の専門家。物理面では脆いが、構造そのものを書き換える。電脳層は M4。",
+      "spoiler": 1,
+      "statOrder": [
+        "int",
+        "wis",
+        "dex",
+        "con",
+        "chr",
+        "str"
+      ],
+      "cogBonus": 6
+    }
+  ]
+}

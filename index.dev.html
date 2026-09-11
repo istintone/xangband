@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STRATA</title>
+<!--
+  開発用エントリ。src/ を個別に読むのでビルド不要で反復できる。
+  配布物は `python build.py` が生成する index.html (単一ファイル)。
+
+  ★このファイルの <script> の並びが「結合順と層」の正本 (docs/01 §1.2, [[D-23]])。
+    build.py / src/tests/_setup.js / tools/check_code.js はいずれもここを読む。
+    data-layer="rule"  … DOM 非依存。テストから直接ロードでき、DOM 参照は lint で禁止
+    data-layer="shell" … 描画・入力・保存・起動。DOM を触ってよい
+    boot.js は起動の副作用を持つので必ず最後。
+
+  data-gen.js は src/data/*.json から build.py が生成する ([[D-25]])。
+  JSON を編集したら `python build.py` を実行すること。
+
+  画面構成 (docs/09 §9.11, [[D-55]]):
+    #cmdpanel  操作パネル(クリックで遊べる)      ─ 枠外UI
+    #stage     Canvas 疑似端末 80x40             ─ ゲーム本体
+    #guide     いま何をすべきか (進行のガイド)    ─ 枠外UI / 中央下部
+    #log       メッセージ履歴                    ─ 枠外UI / 中央下部
+    #legend    HUD (今見えているものの説明)       ─ 枠外UI
+-->
+<!-- BUILD:CSS -->
+<link rel="stylesheet" href="src/css/base.css">
+<link rel="stylesheet" href="src/css/console.css">
+<!-- /BUILD:CSS -->
+</head>
+<body>
+<div id="app">
+  <aside id="cmdpanel" class="side"></aside>
+  <div id="center">
+    <div id="stage"><canvas id="term"></canvas></div>
+    <div id="console">
+      <section id="guide" class="con"></section>
+      <section id="log" class="con"></section>
+    </div>
+  </div>
+  <aside id="legend" class="side"></aside>
+</div>
+<button id="toggle" type="button">表示 \</button>
+<!-- BUILD:JS -->
+<script src="src/js/rng.js"        data-layer="rule"></script>
+<script src="src/js/util.js"       data-layer="rule"></script>
+<script src="src/js/data-gen.js"   data-layer="rule"></script>
+<script src="src/js/data.js"       data-layer="rule"></script>
+<script src="src/js/stat.js"       data-layer="rule"></script>
+<script src="src/js/env.js"        data-layer="rule"></script>
+<script src="src/js/site.js"       data-layer="rule"></script>
+<script src="src/js/world.js"      data-layer="rule"></script>
+<script src="src/js/gen-rooms.js"  data-layer="rule"></script>
+<script src="src/js/gen-common.js" data-layer="rule"></script>
+<script src="src/js/fov.js"        data-layer="rule"></script>
+<script src="src/js/turn.js"       data-layer="rule"></script>
+<script src="src/js/actor.js"      data-layer="rule"></script>
+<script src="src/js/sigil.js"      data-layer="rule"></script>
+<script src="src/js/lore.js"       data-layer="rule"></script>
+<script src="src/js/ability.js"    data-layer="rule"></script>
+<script src="src/js/player.js"     data-layer="rule"></script>
+<script src="src/js/effect.js"     data-layer="rule"></script>
+<script src="src/js/combat.js"     data-layer="rule"></script>
+<script src="src/js/monster.js"    data-layer="rule"></script>
+<script src="src/js/ai.js"         data-layer="rule"></script>
+<script src="src/js/item.js"       data-layer="rule"></script>
+<script src="src/js/fragment.js"   data-layer="rule"></script>
+<script src="src/js/inventory.js"  data-layer="rule"></script>
+<script src="src/js/target.js"     data-layer="rule"></script>
+<script src="src/js/hub.js"        data-layer="rule"></script>
+<script src="src/js/craft.js"      data-layer="rule"></script>
+<script src="src/js/signature.js"  data-layer="rule"></script>
+<script src="src/js/net.js"        data-layer="rule"></script>
+<script src="src/js/origin.js"     data-layer="rule"></script>
+<script src="src/js/cmd.js"        data-layer="rule"></script>
+<script src="src/js/action.js"     data-layer="rule"></script>
+<script src="src/js/devstart.js"   data-layer="rule"></script>
+<script src="src/js/render.js"     data-layer="rule"></script>
+<script src="src/js/legend.js"     data-layer="rule"></script>
+<script src="src/js/term.js"       data-layer="shell"></script>
+<script src="src/js/theme.js"      data-layer="shell"></script>
+<script src="src/js/panel.js"      data-layer="shell"></script>
+<script src="src/js/ui.js"         data-layer="shell"></script>
+<script src="src/js/save.js"       data-layer="shell"></script>
+<script src="src/js/input.js"      data-layer="shell"></script>
+<script src="src/js/boot.js"       data-layer="shell"></script>
+<!-- /BUILD:JS -->
+</body>
+</html>

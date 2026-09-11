@@ -1,0 +1,3219 @@
+{
+  "_comment": [
+    "敵の定義 (docs/03 §3.4)。本家 monster.txt に対応。",
+    "depth  … 出現しはじめる深度。rarity … 大きいほど出にくい (重み 1/rarity)。",
+    "speed  … 110 が標準 (docs/02 §2.1)。hp は nDs 表記。",
+    "blows  … { method, effect, dice } の配列。effect は combat.js が解釈する。",
+    "mexp   … 経験値の元値。獲得量 = mexp * level / プレイヤーlevel (docs/02 §2.5)。",
+    "flags  … GROUP(群れで出る) ERRATIC(不規則移動) NO_FEAR(逃げない) COWARD(早めに逃げる)",
+    "sleep  … 警戒度。配置時 asleep = rand(sleep..sleep*2)。小さいほど起きやすい ([[D-40]])",
+    "原則: 速度+10 以上の敵は深度8以降にする。序盤に2倍速の敵を置かない ([[D-42]])",
+    "原則: GROUP の敵は個体火力を同深度の単独敵の半分以下にする。群れは最大4体になるため ([[D-43]])",
+    "site/guardian … サイト最深部の守護ユニーク。そのサイトの最深階に確定配置され、倒すと《適合》を落とす ([[D-69]] / docs/07 §7.2)",
+    "spells … { freq, list }。視線が通ると 1/freq で発動 ([[D-68]] / docs/02 §2.9.1)",
+    "FINAL … 最終目標。倒すと勝利フェーズ(帰還)に入る (docs/07 §7.5)"
+  ],
+  "entries": [
+    {
+      "id": "spore-cluster",
+      "name": "胞子塊",
+      "base": "infested",
+      "glyph": "i",
+      "color": "dgreen",
+      "depth": 1,
+      "rarity": 1,
+      "level": 1,
+      "speed": 100,
+      "hp": "2d4",
+      "ac": 3,
+      "mexp": 1,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "hurt",
+          "dice": "1d2"
+        }
+      ],
+      "flags": [
+        "GROUP",
+        "ERRATIC"
+      ],
+      "desc": "床にへばりついた菌糸の塊。動きは鈍いが、必ず群れている。",
+      "spoiler": 1,
+      "sleep": 28
+    },
+    {
+      "id": "maintenance-drone",
+      "name": "保守ドローン",
+      "base": "automata",
+      "glyph": "d",
+      "color": "dblue",
+      "depth": 1,
+      "rarity": 1,
+      "level": 1,
+      "speed": 110,
+      "hp": "3d5",
+      "ac": 12,
+      "mexp": 3,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "1d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "配管の補修を続けている小型機。侵入者を障害物として排除しようとする。",
+      "spoiler": 1,
+      "sleep": 15
+    },
+    {
+      "id": "scavenger",
+      "name": "拾い屋",
+      "base": "human",
+      "glyph": "p",
+      "color": "lgray",
+      "depth": 1,
+      "rarity": 2,
+      "level": 2,
+      "speed": 110,
+      "hp": "4d6",
+      "ac": 8,
+      "mexp": 4,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "1d6"
+        }
+      ],
+      "flags": [
+        "COWARD"
+      ],
+      "desc": "先に来ていた同業者。分け合う気はないらしい。",
+      "spoiler": 1,
+      "sleep": 25
+    },
+    {
+      "id": "infested-crew",
+      "name": "感染した乗員",
+      "base": "infested",
+      "glyph": "i",
+      "color": "green",
+      "depth": 2,
+      "rarity": 1,
+      "level": 3,
+      "speed": 110,
+      "hp": "6d6",
+      "ac": 10,
+      "mexp": 6,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "taint",
+          "dice": "1d2"
+        }
+      ],
+      "flags": [
+        "GROUP"
+      ],
+      "desc": "制服の残骸をまとっている。顔だったものが、こちらを向く。",
+      "spoiler": 1,
+      "sleep": 40
+    },
+    {
+      "id": "cleaner-drone",
+      "name": "清掃機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "cyan",
+      "depth": 8,
+      "rarity": 1,
+      "level": 4,
+      "speed": 120,
+      "hp": "5d6",
+      "ac": 16,
+      "mexp": 9,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "acid",
+          "dice": "1d6"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "溶解剤を噴きながら床を磨き続ける。有機物は等しく汚れとみなされる。",
+      "spoiler": 1,
+      "sleep": 15
+    },
+    {
+      "id": "hull-crawler",
+      "name": "船殻這い",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "magenta",
+      "depth": 4,
+      "rarity": 2,
+      "level": 5,
+      "speed": 110,
+      "hp": "7d7",
+      "ac": 14,
+      "mexp": 12,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "hurt",
+          "dice": "2d4"
+        }
+      ],
+      "flags": [
+        "ERRATIC"
+      ],
+      "desc": "壁の内側を這う多脚。どこから出てくるか分からない。",
+      "spoiler": 1,
+      "sleep": 35
+    },
+    {
+      "id": "raider",
+      "name": "略奪者",
+      "base": "human",
+      "glyph": "p",
+      "color": "red",
+      "depth": 6,
+      "rarity": 1,
+      "level": 6,
+      "speed": 110,
+      "hp": "9d8",
+      "ac": 18,
+      "mexp": 18,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "1d3"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "1d2"
+        }
+      ],
+      "flags": [
+        "GROUP",
+        "COWARD"
+      ],
+      "desc": "組織立って動く。逃げるときは必ず仲間を呼びに行く。",
+      "spoiler": 1,
+      "sleep": 25
+    },
+    {
+      "id": "security-unit",
+      "name": "警備機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "blue",
+      "depth": 6,
+      "rarity": 2,
+      "level": 8,
+      "speed": 110,
+      "hp": "12d8",
+      "ac": 28,
+      "mexp": 30,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "2d6"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "断絶前の警備規定を、相手が誰であれ執行する。",
+      "spoiler": 1,
+      "sleep": 15
+    },
+    {
+      "id": "brood-mother",
+      "name": "苗床",
+      "base": "infested",
+      "glyph": "i",
+      "color": "dred",
+      "depth": 7,
+      "rarity": 3,
+      "level": 9,
+      "speed": 100,
+      "hp": "16d8",
+      "ac": 14,
+      "mexp": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "taint",
+          "dice": "1d6"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "2d6"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "動かない。動く必要がない。周囲の胞子は全てこれから出ている。",
+      "spoiler": 2,
+      "sleep": 40
+    },
+    {
+      "id": "void-stalker",
+      "name": "虚空追い",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "dgray",
+      "depth": 9,
+      "rarity": 3,
+      "level": 11,
+      "speed": 120,
+      "hp": "14d8",
+      "ac": 24,
+      "mexp": 55,
+      "blows": [
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "2d5"
+        },
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "2d5"
+        }
+      ],
+      "flags": [
+        "ERRATIC"
+      ],
+      "desc": "光の届かない区画から出てこない。だから光を消しに来る。",
+      "spoiler": 2,
+      "sleep": 35
+    },
+    {
+      "id": "breach-hound",
+      "name": "破断犬",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "orange",
+      "depth": 11,
+      "rarity": 2,
+      "level": 13,
+      "speed": 120,
+      "hp": "18d8",
+      "ac": 22,
+      "mexp": 70,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "hurt",
+          "dice": "2d5"
+        }
+      ],
+      "flags": [
+        "GROUP"
+      ],
+      "desc": "減圧した区画にしか棲まない。息をしていない。",
+      "spoiler": 2,
+      "sleep": 50
+    },
+    {
+      "id": "corporate-enforcer",
+      "name": "企業保安",
+      "base": "human",
+      "glyph": "p",
+      "color": "yellow",
+      "depth": 13,
+      "rarity": 2,
+      "level": 15,
+      "speed": 110,
+      "hp": "22d9",
+      "ac": 34,
+      "mexp": 95,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "2d8"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "2d8"
+        }
+      ],
+      "flags": [],
+      "desc": "まだ給料が出ていると信じている。装備だけは新しい。",
+      "spoiler": 2,
+      "sleep": 25
+    },
+    {
+      "id": "heavy-loader",
+      "name": "重機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "gray",
+      "depth": 15,
+      "rarity": 3,
+      "level": 18,
+      "speed": 100,
+      "hp": "30d10",
+      "ac": 44,
+      "mexp": 140,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "4d6"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "貨物を運ぶために作られた。貨物とそれ以外を区別する機能は壊れている。",
+      "spoiler": 2,
+      "sleep": 15
+    },
+    {
+      "id": "severance-echo",
+      "name": "断絶の残響",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "orange",
+      "depth": 18,
+      "rarity": 4,
+      "level": 22,
+      "speed": 120,
+      "hp": "26d10",
+      "ac": 30,
+      "mexp": 220,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "drain-cell",
+          "dice": "2d6"
+        },
+        {
+          "method": "touch",
+          "effect": "hurt",
+          "dice": "3d6"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "断絶の瞬間がその場に貼り付いたもの。近づくと機材から電力が消える。",
+      "spoiler": 3,
+      "sleep": 5
+    },
+    {
+      "id": "u-first-mate",
+      "name": "《一等航海士》",
+      "base": "human",
+      "glyph": "P",
+      "color": "white",
+      "depth": 6,
+      "rarity": 1,
+      "level": 8,
+      "speed": 120,
+      "hp": "30d10",
+      "ac": 30,
+      "mexp": 300,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "2d8"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "2d8"
+        }
+      ],
+      "flags": [
+        "UNIQUE",
+        "NO_FEAR",
+        "ESCORT"
+      ],
+      "escort": "raider",
+      "escortNum": "1d4",
+      "desc": "退艦命令を最後まで出さなかった。今も持ち場を離れない。",
+      "spoiler": 2,
+      "sleep": 12
+    },
+    {
+      "id": "u-ward-core",
+      "name": "《区画統制核》",
+      "base": "automata",
+      "glyph": "D",
+      "color": "blue",
+      "depth": 12,
+      "rarity": 1,
+      "level": 16,
+      "speed": 110,
+      "hp": "50d10",
+      "ac": 50,
+      "mexp": 900,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "elec",
+          "dice": "3d8"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "3d8"
+        }
+      ],
+      "flags": [
+        "UNIQUE",
+        "NO_FEAR",
+        "ESCORT"
+      ],
+      "escort": "security-unit",
+      "escortNum": "2d3",
+      "desc": "この区画の全ての機械を統べていた。まだ統べている。",
+      "spoiler": 2,
+      "sleep": 12
+    },
+    {
+      "id": "u-the-first-infected",
+      "name": "《最初の感染者》",
+      "base": "infested",
+      "glyph": "I",
+      "color": "dred",
+      "depth": 18,
+      "rarity": 1,
+      "level": 24,
+      "speed": 120,
+      "hp": "70d10",
+      "ac": 40,
+      "mexp": 2000,
+      "blows": [
+        {
+          "method": "claw",
+          "effect": "taint",
+          "dice": "3d6"
+        },
+        {
+          "method": "bite",
+          "effect": "taint",
+          "dice": "3d6"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "4d6"
+        }
+      ],
+      "flags": [
+        "UNIQUE",
+        "NO_FEAR",
+        "ESCORT"
+      ],
+      "escort": "infested-crew",
+      "escortNum": "3d4",
+      "desc": "ここから全てが始まった。名前は記録から削除されている。",
+      "spoiler": 3,
+      "sleep": 12
+    },
+    {
+      "id": "u-the-cartographer",
+      "name": "《測量者》",
+      "base": "aberrant",
+      "glyph": "Z",
+      "color": "magenta",
+      "depth": 28,
+      "rarity": 1,
+      "level": 34,
+      "speed": 130,
+      "hp": "90d12",
+      "ac": 60,
+      "mexp": 5000,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "drain-cell",
+          "dice": "4d8"
+        },
+        {
+          "method": "touch",
+          "effect": "confuse",
+          "dice": "4d8"
+        },
+        {
+          "method": "touch",
+          "effect": "hurt",
+          "dice": "6d6"
+        }
+      ],
+      "flags": [
+        "UNIQUE",
+        "NO_FEAR"
+      ],
+      "desc": "この構造物を測り続けている。測り終えたら何が起きるのか、誰も知らない。",
+      "spoiler": 3,
+      "sleep": 12
+    },
+    {
+      "id": "salvage-crew",
+      "name": "回収班",
+      "base": "human",
+      "glyph": "p",
+      "color": "cyan",
+      "depth": 8,
+      "rarity": 2,
+      "level": 10,
+      "speed": 110,
+      "hp": "14d8",
+      "ac": 24,
+      "mexp": 45,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "1d5"
+        }
+      ],
+      "flags": [
+        "GROUP",
+        "COWARD"
+      ],
+      "desc": "同業者。数で来る。",
+      "spoiler": 1,
+      "sleep": 25
+    },
+    {
+      "id": "rad-husk",
+      "name": "被曝体",
+      "base": "infested",
+      "glyph": "i",
+      "color": "yellow",
+      "depth": 10,
+      "rarity": 2,
+      "level": 12,
+      "speed": 100,
+      "hp": "20d8",
+      "ac": 16,
+      "mexp": 60,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "rad",
+          "dice": "1d4"
+        },
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "1d4"
+        }
+      ],
+      "flags": [
+        "GROUP",
+        "NO_FEAR"
+      ],
+      "desc": "炉心区画から出てきた。近づくだけで計器が鳴る。",
+      "spoiler": 2,
+      "sleep": 40
+    },
+    {
+      "id": "ice-drifter",
+      "name": "氷結漂着体",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "cyan",
+      "depth": 16,
+      "rarity": 3,
+      "level": 19,
+      "speed": 110,
+      "hp": "24d9",
+      "ac": 30,
+      "mexp": 150,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "cold",
+          "dice": "4d6"
+        }
+      ],
+      "flags": [
+        "ERRATIC"
+      ],
+      "desc": "船外から入り込んだ。まだ外の温度を保っている。",
+      "spoiler": 2,
+      "sleep": 35
+    },
+    {
+      "id": "furnace-walker",
+      "name": "炉内歩行体",
+      "base": "automata",
+      "glyph": "d",
+      "color": "orange",
+      "depth": 20,
+      "rarity": 3,
+      "level": 24,
+      "speed": 110,
+      "hp": "34d10",
+      "ac": 46,
+      "mexp": 260,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "fire",
+          "dice": "5d6"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "3d6"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "炉の中で作業するために作られた。外に出てきてしまった。",
+      "spoiler": 2,
+      "sleep": 15
+    },
+    {
+      "id": "null-shape",
+      "name": "空白",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "dgray",
+      "depth": 24,
+      "rarity": 4,
+      "level": 29,
+      "speed": 120,
+      "hp": "40d10",
+      "ac": 44,
+      "mexp": 600,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "5d8"
+        },
+        {
+          "method": "touch",
+          "effect": "confuse",
+          "dice": "3d6"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "そこに何も無いことが、はっきりと見える。",
+      "spoiler": 3,
+      "sleep": 5
+    },
+    {
+      "id": "sweeper-unit",
+      "name": "掃引機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "dblue",
+      "depth": 3,
+      "rarity": 1,
+      "level": 4,
+      "speed": 110,
+      "hp": "6d6",
+      "ac": 18,
+      "mexp": 10,
+      "sleep": 15,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "acid",
+          "dice": "1d6"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "通路を往復し続けている。溶解剤のタンクは、まだ空になっていない。",
+      "spoiler": 1
+    },
+    {
+      "id": "u-chief-engineer",
+      "name": "《機関長》",
+      "base": "human",
+      "glyph": "P",
+      "color": "lblue",
+      "depth": 40,
+      "rarity": 1,
+      "level": 46,
+      "speed": 120,
+      "hp": "110d12",
+      "ac": 70,
+      "mexp": 9000,
+      "sleep": 60,
+      "site": "ark",
+      "guardian": true,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "5d8"
+        },
+        {
+          "method": "hit",
+          "effect": "cold",
+          "dice": "4d8"
+        }
+      ],
+      "spells": {
+        "freq": 4,
+        "list": [
+          "breath:vacuum:25",
+          "bolt:cold:8d8",
+          "status:paralyzed",
+          "blink:8"
+        ]
+      },
+      "flags": [
+        "UNIQUE",
+        "NO_FEAR",
+        "ESCORT"
+      ],
+      "escort": "hull-crawler",
+      "escortNum": "1d3",
+      "desc": "退艦の順序を決めた人物。区画をひとつずつ捨てて、最後に自分の区画を残した。",
+      "spoiler": 2
+    },
+    {
+      "id": "u-ash-warden",
+      "name": "《灰の巡回者》",
+      "base": "xeno",
+      "glyph": "X",
+      "color": "orange",
+      "depth": 30,
+      "rarity": 1,
+      "level": 36,
+      "speed": 125,
+      "hp": "95d12",
+      "ac": 62,
+      "mexp": 6000,
+      "sleep": 50,
+      "site": "ash",
+      "guardian": true,
+      "blows": [
+        {
+          "method": "claw",
+          "effect": "rad",
+          "dice": "4d8"
+        },
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "4d8"
+        }
+      ],
+      "spells": {
+        "freq": 4,
+        "list": [
+          "breath:rad:25",
+          "bolt:fire:8d8",
+          "status:blind",
+          "summon:2"
+        ]
+      },
+      "flags": [
+        "UNIQUE",
+        "NO_FEAR"
+      ],
+      "desc": "昼も夜も地表を歩き続けている。恒星風に灼かれた表面が、そのまま殻になった。",
+      "spoiler": 2
+    },
+    {
+      "id": "u-cultivator",
+      "name": "《培養者》",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "magenta",
+      "depth": 60,
+      "rarity": 1,
+      "level": 66,
+      "speed": 125,
+      "hp": "140d14",
+      "ac": 85,
+      "mexp": 18000,
+      "sleep": 40,
+      "site": "ruins",
+      "guardian": true,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "taint",
+          "dice": "6d8"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "7d8"
+        }
+      ],
+      "spells": {
+        "freq": 4,
+        "list": [
+          "breath:taint:25",
+          "bolt:psi:10d8",
+          "summon:3",
+          "heal:20"
+        ]
+      },
+      "flags": [
+        "UNIQUE",
+        "NO_FEAR"
+      ],
+      "desc": "遺跡の底で何かを育てている。育てられているものが何なのかは分からない。",
+      "spoiler": 3
+    },
+    {
+      "id": "u-custodian",
+      "name": "《管理人》",
+      "base": "automata",
+      "glyph": "A",
+      "color": "cyan",
+      "depth": 80,
+      "rarity": 1,
+      "level": 86,
+      "speed": 130,
+      "hp": "175d15",
+      "ac": 100,
+      "mexp": 32000,
+      "sleep": 30,
+      "site": "spire",
+      "guardian": true,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "elec",
+          "dice": "8d8"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "8d8"
+        }
+      ],
+      "spells": {
+        "freq": 3,
+        "list": [
+          "status:watch",
+          "bolt:elec:10d10",
+          "status:confused",
+          "heal:25",
+          "blink:10"
+        ]
+      },
+      "flags": [
+        "UNIQUE",
+        "NO_FEAR",
+        "ESCORT"
+      ],
+      "escort": "security-unit",
+      "escortNum": "1d4",
+      "desc": "尖塔を維持し続けている。誰のために維持しているのかは、もう記録に無い。",
+      "spoiler": 3
+    },
+    {
+      "id": "u-warden",
+      "name": "《門番》",
+      "base": "aberrant",
+      "glyph": "W",
+      "color": "yellow",
+      "depth": 99,
+      "rarity": 1,
+      "level": 99,
+      "speed": 130,
+      "hp": "220d15",
+      "ac": 120,
+      "mexp": 60000,
+      "sleep": 0,
+      "site": "origin",
+      "guardian": false,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "10d10"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "10d10"
+        },
+        {
+          "method": "touch",
+          "effect": "rad",
+          "dice": "8d8"
+        }
+      ],
+      "spells": {
+        "freq": 2,
+        "list": [
+          "breath:vacuum:22",
+          "breath:rad:22",
+          "breath:taint:22",
+          "status:watch",
+          "bolt:psi:12d10"
+        ]
+      },
+      "flags": [
+        "UNIQUE",
+        "NO_FEAR"
+      ],
+      "desc": "通す相手と通さない相手を見分けている。基準は説明されない。",
+      "spoiler": 3
+    },
+    {
+      "id": "u-origin",
+      "name": "《起源》",
+      "base": "aberrant",
+      "glyph": "O",
+      "color": "white",
+      "depth": 100,
+      "rarity": 1,
+      "level": 100,
+      "speed": 130,
+      "hp": "320d16",
+      "ac": 140,
+      "mexp": 150000,
+      "sleep": 0,
+      "site": "origin",
+      "guardian": false,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "12d12"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "12d12"
+        },
+        {
+          "method": "touch",
+          "effect": "taint",
+          "dice": "10d10"
+        }
+      ],
+      "spells": {
+        "freq": 2,
+        "list": [
+          "breath:vacuum:25",
+          "breath:rad:25",
+          "breath:taint:25",
+          "bolt:elec:15d12",
+          "status:confused",
+          "summon:3",
+          "heal:12"
+        ]
+      },
+      "flags": [
+        "UNIQUE",
+        "NO_FEAR",
+        "FINAL"
+      ],
+      "desc": "形が定まらない。見ているものが本体なのかどうかも分からない。",
+      "spoiler": 3
+    },
+    {
+      "id": "wire-worm",
+      "name": "配線蟲",
+      "base": "automata",
+      "glyph": "d",
+      "color": "dcyan",
+      "depth": 12,
+      "rarity": 1,
+      "level": 18,
+      "speed": 110,
+      "hp": "25d8",
+      "ac": 36,
+      "mexp": 941,
+      "sleep": 29,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "elec",
+          "dice": "4d5"
+        }
+      ],
+      "flags": [
+        "ERRATIC"
+      ],
+      "desc": "配線を辿って移動する。噛まれると電装が焼ける。",
+      "spoiler": 1
+    },
+    {
+      "id": "fused-mass",
+      "name": "融合体",
+      "base": "infested",
+      "glyph": "i",
+      "color": "dgreen",
+      "depth": 14,
+      "rarity": 1,
+      "level": 20,
+      "speed": 110,
+      "hp": "24d10",
+      "ac": 38,
+      "mexp": 1195,
+      "sleep": 29,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "taint",
+          "dice": "2d6"
+        }
+      ],
+      "flags": [
+        "GROUP",
+        "NO_FEAR"
+      ],
+      "desc": "何人だったのかは分からない。数えようとしないほうがいい。",
+      "spoiler": 1
+    },
+    {
+      "id": "contract-hunter",
+      "name": "契約狩人",
+      "base": "human",
+      "glyph": "p",
+      "color": "lgray",
+      "depth": 17,
+      "rarity": 1,
+      "level": 23,
+      "speed": 110,
+      "hp": "29d10",
+      "ac": 42,
+      "mexp": 1615,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "3d6"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "3d6"
+        }
+      ],
+      "flags": [
+        "COWARD"
+      ],
+      "desc": "誰と契約したのかは言わない。報酬が何なのかも言わない。",
+      "spoiler": 1,
+      "spells": {
+        "freq": 6,
+        "list": [
+          "bolt:elec:4d6",
+          "blink:6"
+        ]
+      }
+    },
+    {
+      "id": "shell-splitter",
+      "name": "殻裂き",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "magenta",
+      "depth": 21,
+      "rarity": 1,
+      "level": 27,
+      "speed": 110,
+      "hp": "36d10",
+      "ac": 47,
+      "mexp": 2241,
+      "sleep": 28,
+      "blows": [
+        {
+          "method": "claw",
+          "effect": "acid",
+          "dice": "6d4"
+        },
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "6d4"
+        }
+      ],
+      "flags": [
+        "ERRATIC"
+      ],
+      "desc": "装甲の継ぎ目だけを狙ってくる。継ぎ目の位置を知っている。",
+      "spoiler": 1
+    },
+    {
+      "id": "borer",
+      "name": "掘削機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "dyellow",
+      "depth": 22,
+      "rarity": 1,
+      "level": 28,
+      "speed": 110,
+      "hp": "38d10",
+      "ac": 49,
+      "mexp": 2409,
+      "sleep": 28,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "11d5"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "岩盤を掘るために作られた。掘る対象を選ばない。",
+      "spoiler": 1
+    },
+    {
+      "id": "requisition-squad",
+      "name": "徴発隊",
+      "base": "human",
+      "glyph": "p",
+      "color": "white",
+      "depth": 23,
+      "rarity": 1,
+      "level": 29,
+      "speed": 110,
+      "hp": "40d10",
+      "ac": 50,
+      "mexp": 2581,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "2d12"
+        }
+      ],
+      "flags": [
+        "GROUP",
+        "COWARD"
+      ],
+      "desc": "まだ本社の命令で動いている。本社はもう無い。",
+      "spoiler": 1,
+      "spells": {
+        "freq": 8,
+        "list": [
+          "bolt:fire:3d6"
+        ]
+      }
+    },
+    {
+      "id": "growth-medium",
+      "name": "培地",
+      "base": "infested",
+      "glyph": "i",
+      "color": "green",
+      "depth": 25,
+      "rarity": 1,
+      "level": 31,
+      "speed": 110,
+      "hp": "43d10",
+      "ac": 52,
+      "mexp": 2937,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "taint",
+          "dice": "6d4"
+        },
+        {
+          "method": "touch",
+          "effect": "taint",
+          "dice": "6d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "床に広がっている。踏んだところから根が伸びる。",
+      "spoiler": 1,
+      "spells": {
+        "freq": 7,
+        "list": [
+          "summon:1"
+        ]
+      }
+    },
+    {
+      "id": "shadeswimmer",
+      "name": "影泳ぎ",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "dblue",
+      "depth": 26,
+      "rarity": 1,
+      "level": 32,
+      "speed": 110,
+      "hp": "45d10",
+      "ac": 54,
+      "mexp": 3121,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "cold",
+          "dice": "12d5"
+        }
+      ],
+      "flags": [
+        "ERRATIC"
+      ],
+      "desc": "光の届かない場所を選んで進む。灯りを消すと見失う。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 6,
+        "list": [
+          "blink:8",
+          "status:blind"
+        ]
+      }
+    },
+    {
+      "id": "watchtower-head",
+      "name": "監視塔頭",
+      "base": "automata",
+      "glyph": "d",
+      "color": "cyan",
+      "depth": 27,
+      "rarity": 1,
+      "level": 33,
+      "speed": 110,
+      "hp": "47d10",
+      "ac": 55,
+      "mexp": 3309,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "elec",
+          "dice": "14d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "塔から外された監視系。外されたことに気づいていない。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "status:watch",
+          "bolt:elec:5d6"
+        ]
+      }
+    },
+    {
+      "id": "reverberation",
+      "name": "反響",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "orange",
+      "depth": 29,
+      "rarity": 1,
+      "level": 35,
+      "speed": 110,
+      "hp": "50d10",
+      "ac": 58,
+      "mexp": 3696,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "18d4"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "音がしてから、少し遅れて形になる。順番が逆に見える。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 5,
+        "list": [
+          "bolt:psi:6d6",
+          "status:confused"
+        ]
+      }
+    },
+    {
+      "id": "corporate-ranger",
+      "name": "企業猟兵",
+      "base": "human",
+      "glyph": "p",
+      "color": "lblue",
+      "depth": 30,
+      "rarity": 2,
+      "level": 36,
+      "speed": 115,
+      "hp": "52d10",
+      "ac": 59,
+      "mexp": 3896,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "7d5"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "7d5"
+        }
+      ],
+      "flags": [],
+      "desc": "撤退命令を受け取っていない部隊。装備だけは新しい。",
+      "spoiler": 1,
+      "spells": {
+        "freq": 6,
+        "list": [
+          "bolt:fire:5d8",
+          "heal:20"
+        ]
+      }
+    },
+    {
+      "id": "turret-frame",
+      "name": "装甲砲座",
+      "base": "automata",
+      "glyph": "d",
+      "color": "lgray",
+      "depth": 31,
+      "rarity": 2,
+      "level": 37,
+      "speed": 115,
+      "hp": "53d10",
+      "ac": 60,
+      "mexp": 4099,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "8d12"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "動けない。動く必要が無いように配置されている。",
+      "spoiler": 1,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "bolt:elec:6d8"
+        ]
+      }
+    },
+    {
+      "id": "seedbed-matron",
+      "name": "苗床母体",
+      "base": "infested",
+      "glyph": "i",
+      "color": "dgreen",
+      "depth": 32,
+      "rarity": 2,
+      "level": 38,
+      "speed": 115,
+      "hp": "55d10",
+      "ac": 62,
+      "mexp": 4305,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "taint",
+          "dice": "9d8"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "苗床が育ちきったもの。まだ何かを育てている。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 5,
+        "list": [
+          "summon:2",
+          "breath:taint:15"
+        ]
+      }
+    },
+    {
+      "id": "ash-eater",
+      "name": "灰喰らい",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "dyellow",
+      "depth": 33,
+      "rarity": 2,
+      "level": 39,
+      "speed": 115,
+      "hp": "57d10",
+      "ac": 63,
+      "mexp": 4516,
+      "sleep": 27,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "hurt",
+          "dice": "10d4"
+        },
+        {
+          "method": "claw",
+          "effect": "acid",
+          "dice": "10d4"
+        }
+      ],
+      "flags": [
+        "ERRATIC"
+      ],
+      "desc": "地表の灰を食べて生きている。灰は栄養では無いはずだった。",
+      "spoiler": 1
+    },
+    {
+      "id": "memory-eater",
+      "name": "記憶喰い",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "magenta",
+      "depth": 35,
+      "rarity": 2,
+      "level": 41,
+      "speed": 115,
+      "hp": "60d10",
+      "ac": 66,
+      "mexp": 4947,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "8d10"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "触れられた場所の記憶が薄くなる。地図から消える。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "bolt:psi:8d8",
+          "status:confused"
+        ]
+      }
+    },
+    {
+      "id": "sweeper-heavy",
+      "name": "掃討機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "blue",
+      "depth": 36,
+      "rarity": 2,
+      "level": 42,
+      "speed": 115,
+      "hp": "62d10",
+      "ac": 67,
+      "mexp": 5168,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "12d4"
+        },
+        {
+          "method": "hit",
+          "effect": "acid",
+          "dice": "12d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "掃引機の上位機。掃く対象に生体が含まれている。",
+      "spoiler": 1,
+      "spells": {
+        "freq": 6,
+        "list": [
+          "bolt:acid:6d8"
+        ]
+      }
+    },
+    {
+      "id": "reworked-soldier",
+      "name": "改造兵",
+      "base": "human",
+      "glyph": "p",
+      "color": "red",
+      "depth": 37,
+      "rarity": 2,
+      "level": 43,
+      "speed": 115,
+      "hp": "64d10",
+      "ac": 68,
+      "mexp": 5392,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "8d6"
+        },
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "8d6"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "生き延びるために自分を作り替えた。作り替えすぎた。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 6,
+        "list": [
+          "heal:25"
+        ]
+      }
+    },
+    {
+      "id": "moulted",
+      "name": "脱皮体",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "lgray",
+      "depth": 39,
+      "rarity": 2,
+      "level": 45,
+      "speed": 115,
+      "hp": "67d10",
+      "ac": 71,
+      "mexp": 5850,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "11d4"
+        },
+        {
+          "method": "bite",
+          "effect": "taint",
+          "dice": "11d4"
+        }
+      ],
+      "flags": [
+        "ERRATIC"
+      ],
+      "desc": "抜け殻のほうが本体に見える。どちらも動く。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 7,
+        "list": [
+          "blink:10"
+        ]
+      }
+    },
+    {
+      "id": "armoured-unit",
+      "name": "重装甲機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "white",
+      "depth": 40,
+      "rarity": 2,
+      "level": 46,
+      "speed": 115,
+      "hp": "69d10",
+      "ac": 72,
+      "mexp": 6084,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "11d5"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "11d5"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "正面からの攻撃を想定して作られている。背面も同じ厚さだ。",
+      "spoiler": 1,
+      "spells": {
+        "freq": 6,
+        "list": [
+          "breath:elec:15"
+        ]
+      }
+    },
+    {
+      "id": "colony-core",
+      "name": "群体核",
+      "base": "infested",
+      "glyph": "i",
+      "color": "green",
+      "depth": 41,
+      "rarity": 2,
+      "level": 47,
+      "speed": 110,
+      "hp": "71d10",
+      "ac": 73,
+      "mexp": 6322,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "taint",
+          "dice": "4d12"
+        }
+      ],
+      "flags": [
+        "GROUP",
+        "NO_FEAR"
+      ],
+      "desc": "群れの中心。中心を潰しても群れは止まらない。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 6,
+        "list": [
+          "summon:2"
+        ]
+      }
+    },
+    {
+      "id": "pit-jaw",
+      "name": "深穴の顎",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "dred",
+      "depth": 42,
+      "rarity": 2,
+      "level": 48,
+      "speed": 115,
+      "hp": "73d10",
+      "ac": 75,
+      "mexp": 6562,
+      "sleep": 26,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "hurt",
+          "dice": "11d6"
+        },
+        {
+          "method": "bite",
+          "effect": "acid",
+          "dice": "11d6"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "穴の底で口だけが待っている。底があるかは分からない。",
+      "spoiler": 2
+    },
+    {
+      "id": "special-detail",
+      "name": "特務班",
+      "base": "human",
+      "glyph": "p",
+      "color": "yellow",
+      "depth": 44,
+      "rarity": 2,
+      "level": 50,
+      "speed": 110,
+      "hp": "76d10",
+      "ac": 77,
+      "mexp": 7053,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "7d6"
+        }
+      ],
+      "flags": [
+        "GROUP"
+      ],
+      "desc": "四人一組でしか行動しない。三人になると撤退する。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 7,
+        "list": [
+          "bolt:cold:6d8",
+          "blink:8"
+        ]
+      }
+    },
+    {
+      "id": "phase-drift",
+      "name": "位相のずれ",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "cyan",
+      "depth": 45,
+      "rarity": 2,
+      "level": 51,
+      "speed": 115,
+      "hp": "78d10",
+      "ac": 78,
+      "mexp": 7303,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "9d6"
+        },
+        {
+          "method": "touch",
+          "effect": "cold",
+          "dice": "9d6"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "同じ場所に二度いる。二度目のほうが先に来る。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "blink:12",
+          "bolt:psi:9d8",
+          "status:paralyzed"
+        ]
+      }
+    },
+    {
+      "id": "orbital-gun",
+      "name": "軌道砲",
+      "base": "automata",
+      "glyph": "d",
+      "color": "orange",
+      "depth": 46,
+      "rarity": 2,
+      "level": 52,
+      "speed": 115,
+      "hp": "79d10",
+      "ac": 80,
+      "mexp": 7556,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "fire",
+          "dice": "13d10"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "軌道上を狙うために作られた砲。今は下を向いている。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "bolt:fire:10d8",
+          "breath:fire:18"
+        ]
+      }
+    },
+    {
+      "id": "framework",
+      "name": "骨組み",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "lgray",
+      "depth": 47,
+      "rarity": 2,
+      "level": 53,
+      "speed": 115,
+      "hp": "81d10",
+      "ac": 81,
+      "mexp": 7812,
+      "sleep": 26,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "13d5"
+        },
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "13d5"
+        }
+      ],
+      "flags": [
+        "ERRATIC"
+      ],
+      "desc": "生物の骨格に見えるが、内側に何も入っていた形跡が無い。",
+      "spoiler": 2
+    },
+    {
+      "id": "taint-cloud",
+      "name": "汚染雲",
+      "base": "infested",
+      "glyph": "i",
+      "color": "dgreen",
+      "depth": 49,
+      "rarity": 2,
+      "level": 55,
+      "speed": 115,
+      "hp": "85d10",
+      "ac": 84,
+      "mexp": 8334,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "taint",
+          "dice": "25d4"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "形を持たない。気密が保てていれば通り抜けられる。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "breath:taint:20"
+        ]
+      }
+    },
+    {
+      "id": "observer",
+      "name": "観測者",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "white",
+      "depth": 50,
+      "rarity": 2,
+      "level": 56,
+      "speed": 115,
+      "hp": "86d10",
+      "ac": 85,
+      "mexp": 8599,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "28d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "見ている。見られていることが分かる。何も起きない。まだ。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "status:watch",
+          "bolt:psi:10d8",
+          "summon:2"
+        ]
+      }
+    },
+    {
+      "id": "suppressor",
+      "name": "制圧機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "dblue",
+      "depth": 51,
+      "rarity": 2,
+      "level": 57,
+      "speed": 115,
+      "hp": "88d10",
+      "ac": 86,
+      "mexp": 8867,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "17d4"
+        },
+        {
+          "method": "hit",
+          "effect": "elec",
+          "dice": "17d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "生かして捕らえるための機械。手加減の定義が古い。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 5,
+        "list": [
+          "status:paralyzed",
+          "bolt:elec:9d8"
+        ]
+      }
+    },
+    {
+      "id": "spire-sentinel",
+      "name": "塔の衛兵",
+      "base": "human",
+      "glyph": "p",
+      "color": "cyan",
+      "depth": 52,
+      "rarity": 2,
+      "level": 58,
+      "speed": 115,
+      "hp": "90d10",
+      "ac": 88,
+      "mexp": 9138,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "16d4"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "16d4"
+        }
+      ],
+      "flags": [],
+      "desc": "塔の上層を守っている。守るものが何かは聞かされていない。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 5,
+        "list": [
+          "heal:20",
+          "summon:2"
+        ]
+      }
+    },
+    {
+      "id": "stone-eater",
+      "name": "石喰い",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "dyellow",
+      "depth": 53,
+      "rarity": 2,
+      "level": 59,
+      "speed": 115,
+      "hp": "92d10",
+      "ac": 89,
+      "mexp": 9411,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "acid",
+          "dice": "16d5"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "16d5"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "壁を食べて進む。通った跡が新しい通路になる。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 7,
+        "list": [
+          "breath:acid:18"
+        ]
+      }
+    },
+    {
+      "id": "proliferant",
+      "name": "増殖塊",
+      "base": "infested",
+      "glyph": "i",
+      "color": "lgreen",
+      "depth": 55,
+      "rarity": 2,
+      "level": 61,
+      "speed": 110,
+      "hp": "95d10",
+      "ac": 92,
+      "mexp": 9968,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "taint",
+          "dice": "14d4"
+        }
+      ],
+      "flags": [
+        "GROUP",
+        "NO_FEAR"
+      ],
+      "desc": "分裂して増える。倒した数だけ増えているように見える。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 6,
+        "list": [
+          "summon:3"
+        ]
+      }
+    },
+    {
+      "id": "hollow",
+      "name": "空隙",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "dgray",
+      "depth": 56,
+      "rarity": 2,
+      "level": 62,
+      "speed": 115,
+      "hp": "97d10",
+      "ac": 93,
+      "mexp": 10250,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "cold",
+          "dice": "17d4"
+        },
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "17d4"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "そこに何も無い、という形をしている。輪郭だけが見える。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "breath:cold:20",
+          "status:blind"
+        ]
+      }
+    },
+    {
+      "id": "repair-unit",
+      "name": "修復機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "lblue",
+      "depth": 57,
+      "rarity": 2,
+      "level": 63,
+      "speed": 115,
+      "hp": "99d10",
+      "ac": 94,
+      "mexp": 10535,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "24d5"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "壊れたものを直し続けている。敵の定義に「壊すもの」が入っている。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "heal:30",
+          "summon:2"
+        ]
+      }
+    },
+    {
+      "id": "creeping-wall",
+      "name": "這い寄る壁",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "magenta",
+      "depth": 59,
+      "rarity": 2,
+      "level": 65,
+      "speed": 115,
+      "hp": "102d10",
+      "ac": 97,
+      "mexp": 11113,
+      "sleep": 25,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "18d5"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "18d5"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "壁だと思っていたほうが動く。どちらが壁かは後から分かる。",
+      "spoiler": 2
+    },
+    {
+      "id": "record-remnant",
+      "name": "記録の残骸",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "yellow",
+      "depth": 60,
+      "rarity": 3,
+      "level": 66,
+      "speed": 120,
+      "hp": "104d10",
+      "ac": 98,
+      "mexp": 11407,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "28d5"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "誰かの記録が形を持ったもの。読める部分と読めない部分がある。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "bolt:psi:12d8",
+          "status:confused",
+          "blink:10"
+        ]
+      }
+    },
+    {
+      "id": "cutoff-gate",
+      "name": "遮断機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "white",
+      "depth": 61,
+      "rarity": 3,
+      "level": 67,
+      "speed": 120,
+      "hp": "105d10",
+      "ac": 99,
+      "mexp": 11703,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "41d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "区画を切り離すための機構。切り離す範囲を自分で決めはじめた。",
+      "spoiler": 2,
+      "spells": {
+        "freq": 5,
+        "list": [
+          "breath:vacuum:18",
+          "status:paralyzed"
+        ]
+      }
+    },
+    {
+      "id": "upper-executive",
+      "name": "上層執行官",
+      "base": "human",
+      "glyph": "p",
+      "color": "lblue",
+      "depth": 62,
+      "rarity": 3,
+      "level": 68,
+      "speed": 120,
+      "hp": "107d10",
+      "ac": 101,
+      "mexp": 12002,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "8d12"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "8d12"
+        }
+      ],
+      "flags": [],
+      "desc": "塔の最上層に近い階級。まだ命令系統が生きていると思っている。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "heal:25",
+          "summon:3",
+          "bolt:fire:10d8"
+        ]
+      }
+    },
+    {
+      "id": "great-maw",
+      "name": "大顎",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "dred",
+      "depth": 64,
+      "rarity": 3,
+      "level": 70,
+      "speed": 120,
+      "hp": "111d10",
+      "ac": 103,
+      "mexp": 12607,
+      "sleep": 24,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "hurt",
+          "dice": "14d5"
+        },
+        {
+          "method": "bite",
+          "effect": "acid",
+          "dice": "14d5"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "14d5"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "通路の幅より大きい。通路のほうが後から広がる。",
+      "spoiler": 2
+    },
+    {
+      "id": "matrix",
+      "name": "母体",
+      "base": "infested",
+      "glyph": "i",
+      "color": "green",
+      "depth": 65,
+      "rarity": 3,
+      "level": 71,
+      "speed": 120,
+      "hp": "112d10",
+      "ac": 104,
+      "mexp": 12914,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "taint",
+          "dice": "13d6"
+        },
+        {
+          "method": "touch",
+          "effect": "taint",
+          "dice": "13d6"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "全ての感染体がここから出ている。ここも何かから出てきた。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "summon:3",
+          "breath:taint:22"
+        ]
+      }
+    },
+    {
+      "id": "folded-space",
+      "name": "折れた空間",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "cyan",
+      "depth": 67,
+      "rarity": 3,
+      "level": 73,
+      "speed": 120,
+      "hp": "116d10",
+      "ac": 107,
+      "mexp": 13535,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "8d12"
+        },
+        {
+          "method": "touch",
+          "effect": "cold",
+          "dice": "8d12"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "近づくほど遠くなる。遠ざかると隣にいる。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "blink:15",
+          "bolt:psi:13d8",
+          "status:paralyzed"
+        ]
+      }
+    },
+    {
+      "id": "process-unit",
+      "name": "工程機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "orange",
+      "depth": 69,
+      "rarity": 3,
+      "level": 75,
+      "speed": 120,
+      "hp": "119d10",
+      "ac": 110,
+      "mexp": 14166,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "23d4"
+        },
+        {
+          "method": "hit",
+          "effect": "fire",
+          "dice": "23d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "何かを作っている。材料がどこから来ているのかは見ないほうがいい。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "breath:fire:20",
+          "summon:2"
+        ]
+      }
+    },
+    {
+      "id": "prior-step",
+      "name": "前工程の残り",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "dyellow",
+      "depth": 70,
+      "rarity": 3,
+      "level": 76,
+      "speed": 120,
+      "hp": "121d10",
+      "ac": 111,
+      "mexp": 14485,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "18d5"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "18d5"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "片付けられなかったもの。片付ける理由が無かったもの。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "breath:rad:22",
+          "bolt:psi:14d8"
+        ]
+      }
+    },
+    {
+      "id": "assembly-arm",
+      "name": "建造腕",
+      "base": "automata",
+      "glyph": "d",
+      "color": "lgray",
+      "depth": 71,
+      "rarity": 3,
+      "level": 77,
+      "speed": 120,
+      "hp": "123d10",
+      "ac": 112,
+      "mexp": 14807,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "26d4"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "26d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "腕だけが残って動いている。本体があったのかも分からない。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "status:paralyzed"
+        ]
+      }
+    },
+    {
+      "id": "deep-master",
+      "name": "深層の主",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "magenta",
+      "depth": 72,
+      "rarity": 3,
+      "level": 78,
+      "speed": 120,
+      "hp": "124d10",
+      "ac": 114,
+      "mexp": 15132,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "hurt",
+          "dice": "19d4"
+        },
+        {
+          "method": "claw",
+          "effect": "acid",
+          "dice": "19d4"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "19d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "この深さで最も長く生きている。最も長いだけで、最も強くはない。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 5,
+        "list": [
+          "breath:acid:22"
+        ]
+      }
+    },
+    {
+      "id": "last-engineer",
+      "name": "最後の技師",
+      "base": "human",
+      "glyph": "p",
+      "color": "white",
+      "depth": 74,
+      "rarity": 3,
+      "level": 80,
+      "speed": 120,
+      "hp": "128d10",
+      "ac": 116,
+      "mexp": 15788,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "25d4"
+        },
+        {
+          "method": "hit",
+          "effect": "elec",
+          "dice": "25d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "断絶のとき当直だった。以来ずっと持ち場にいる。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "heal:30",
+          "bolt:elec:12d10",
+          "summon:2"
+        ]
+      }
+    },
+    {
+      "id": "amorphous",
+      "name": "不定形",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "white",
+      "depth": 75,
+      "rarity": 3,
+      "level": 81,
+      "speed": 120,
+      "hp": "129d10",
+      "ac": 118,
+      "mexp": 16120,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "21d5"
+        },
+        {
+          "method": "touch",
+          "effect": "taint",
+          "dice": "21d5"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "形が決まっていない。決まっていないまま機能している。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "breath:taint:22",
+          "blink:12",
+          "status:confused"
+        ]
+      }
+    },
+    {
+      "id": "control-core",
+      "name": "統制核",
+      "base": "automata",
+      "glyph": "d",
+      "color": "cyan",
+      "depth": 77,
+      "rarity": 3,
+      "level": 83,
+      "speed": 120,
+      "hp": "133d10",
+      "ac": 120,
+      "mexp": 16792,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "hit",
+          "effect": "elec",
+          "dice": "26d4"
+        },
+        {
+          "method": "hit",
+          "effect": "hurt",
+          "dice": "26d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "命令を配っている。配る先がもう無いことは計算に入っていない。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "status:watch",
+          "summon:3",
+          "bolt:elec:14d10"
+        ]
+      }
+    },
+    {
+      "id": "the-climbing",
+      "name": "這い上がるもの",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "dgreen",
+      "depth": 79,
+      "rarity": 3,
+      "level": 85,
+      "speed": 120,
+      "hp": "136d10",
+      "ac": 123,
+      "mexp": 17472,
+      "sleep": 23,
+      "blows": [
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "8d12"
+        },
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "8d12"
+        },
+        {
+          "method": "bite",
+          "effect": "taint",
+          "dice": "8d12"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "下から上へ向かっている。上に何があるのかを知っている様子は無い。",
+      "spoiler": 3
+    },
+    {
+      "id": "process-fragment",
+      "name": "工程の断片",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "orange",
+      "depth": 80,
+      "rarity": 3,
+      "level": 86,
+      "speed": 120,
+      "hp": "138d10",
+      "ac": 124,
+      "mexp": 17816,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "27d4"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "27d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "工程表から切り取られた一行が、そのまま動いている。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "breath:vacuum:22",
+          "breath:rad:22",
+          "bolt:psi:15d10"
+        ]
+      }
+    },
+    {
+      "id": "assembler",
+      "name": "組立機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "white",
+      "depth": 82,
+      "rarity": 3,
+      "level": 88,
+      "speed": 120,
+      "hp": "142d10",
+      "ac": 127,
+      "mexp": 18511,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "30d4"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "30d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "組み立てている。設計図は無い。設計図が要る段階はもう過ぎている。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "summon:3",
+          "breath:fire:22"
+        ]
+      }
+    },
+    {
+      "id": "inverted-room",
+      "name": "反転した部屋",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "dblue",
+      "depth": 84,
+      "rarity": 3,
+      "level": 90,
+      "speed": 120,
+      "hp": "145d10",
+      "ac": 129,
+      "mexp": 19216,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "cold",
+          "dice": "28d4"
+        },
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "28d4"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "内側が外側になっている。入ったつもりで、出ている。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "blink:16",
+          "breath:cold:24",
+          "status:paralyzed"
+        ]
+      }
+    },
+    {
+      "id": "cultivated",
+      "name": "培養されたもの",
+      "base": "xeno",
+      "glyph": "x",
+      "color": "lgreen",
+      "depth": 85,
+      "rarity": 3,
+      "level": 91,
+      "speed": 120,
+      "hp": "147d10",
+      "ac": 130,
+      "mexp": 19572,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "bite",
+          "effect": "taint",
+          "dice": "16d6"
+        },
+        {
+          "method": "claw",
+          "effect": "hurt",
+          "dice": "16d6"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "16d6"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "自然に生まれたものではない。育てた者の意図は読めない。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 4,
+        "list": [
+          "breath:taint:24"
+        ]
+      }
+    },
+    {
+      "id": "mould",
+      "name": "鋳型",
+      "base": "automata",
+      "glyph": "d",
+      "color": "dyellow",
+      "depth": 87,
+      "rarity": 3,
+      "level": 93,
+      "speed": 120,
+      "hp": "150d10",
+      "ac": 133,
+      "mexp": 20290,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "32d4"
+        },
+        {
+          "method": "hit",
+          "effect": "fire",
+          "dice": "32d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "何かを流し込むための型。中身が固まったまま歩いている。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "breath:fire:24",
+          "status:paralyzed"
+        ]
+      }
+    },
+    {
+      "id": "unfinished",
+      "name": "未完成品",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "gray",
+      "depth": 89,
+      "rarity": 3,
+      "level": 95,
+      "speed": 120,
+      "hp": "154d10",
+      "ac": 136,
+      "mexp": 21018,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "27d5"
+        },
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "27d5"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "作りかけで止まっている。止まった理由が完成でないことだけは分かる。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "bolt:psi:16d10",
+          "summon:3",
+          "heal:15"
+        ]
+      }
+    },
+    {
+      "id": "next-material",
+      "name": "次の材料",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "red",
+      "depth": 90,
+      "rarity": 4,
+      "level": 96,
+      "speed": 120,
+      "hp": "155d10",
+      "ac": 137,
+      "mexp": 21385,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "taint",
+          "dice": "33d4"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "33d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "材料として選ばれたもの。選ばれたことに気づいて動いている。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "breath:taint:25",
+          "breath:rad:25",
+          "bolt:psi:17d10"
+        ]
+      }
+    },
+    {
+      "id": "main-shaft",
+      "name": "主軸",
+      "base": "automata",
+      "glyph": "d",
+      "color": "white",
+      "depth": 92,
+      "rarity": 4,
+      "level": 98,
+      "speed": 120,
+      "hp": "159d10",
+      "ac": 140,
+      "mexp": 22126,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "24d4"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "24d4"
+        },
+        {
+          "method": "hit",
+          "effect": "elec",
+          "dice": "24d4"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "全ての工程がこれを中心に回っている。回り続けている。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 3,
+        "list": [
+          "breath:elec:25",
+          "summon:3"
+        ]
+      }
+    },
+    {
+      "id": "watching-eye",
+      "name": "観測の目",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "yellow",
+      "depth": 94,
+      "rarity": 4,
+      "level": 100,
+      "speed": 120,
+      "hp": "162d10",
+      "ac": 142,
+      "mexp": 22876,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "57d5"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "観測されている限り、材料は材料であり続ける。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 2,
+        "list": [
+          "status:watch",
+          "bolt:psi:18d10",
+          "summon:3",
+          "status:paralyzed"
+        ]
+      }
+    },
+    {
+      "id": "undefined",
+      "name": "定義されないもの",
+      "base": "aberrant",
+      "glyph": "A",
+      "color": "magenta",
+      "depth": 96,
+      "rarity": 4,
+      "level": 102,
+      "speed": 120,
+      "hp": "166d10",
+      "ac": 145,
+      "mexp": 23635,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "touch",
+          "effect": "psi",
+          "dice": "25d4"
+        },
+        {
+          "method": "touch",
+          "effect": "cold",
+          "dice": "25d4"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "25d4"
+        }
+      ],
+      "flags": [
+        "ERRATIC",
+        "NO_FEAR"
+      ],
+      "desc": "分類の試みが全て失敗している。失敗の仕方が毎回違う。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 2,
+        "list": [
+          "blink:18",
+          "breath:cold:25",
+          "bolt:psi:19d10",
+          "status:confused"
+        ]
+      }
+    },
+    {
+      "id": "final-process",
+      "name": "最終工程機",
+      "base": "automata",
+      "glyph": "d",
+      "color": "orange",
+      "depth": 98,
+      "rarity": 4,
+      "level": 104,
+      "speed": 120,
+      "hp": "169d10",
+      "ac": 147,
+      "mexp": 24402,
+      "sleep": 40,
+      "blows": [
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "23d5"
+        },
+        {
+          "method": "crush",
+          "effect": "hurt",
+          "dice": "23d5"
+        },
+        {
+          "method": "hit",
+          "effect": "fire",
+          "dice": "23d5"
+        }
+      ],
+      "flags": [
+        "NO_FEAR"
+      ],
+      "desc": "最後の工程を担当している。担当が終われば止まる。まだ終わっていない。",
+      "spoiler": 3,
+      "spells": {
+        "freq": 2,
+        "list": [
+          "breath:fire:25",
+          "breath:vacuum:25",
+          "summon:3",
+          "heal:15"
+        ]
+      }
+    }
+  ]
+}

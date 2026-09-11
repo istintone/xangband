@@ -1,0 +1,160 @@
+{
+  "_comment": [
+    "アイテム大分類とスロット (docs/03 §3.1)。本家 object_base.txt に対応。",
+    "slot … 装備先。null は装備できない(消費/資材)。",
+    "stack … true なら同種が重なる (docs/02 §2.8)。",
+    "span … この深度差までは出現重みが落ちない。超えると緩やかに減衰する ([[D-77]])。定番品(携行食・セル)は歳を取らず、装備は歳を取る"
+  ],
+  "entries": [
+    {
+      "id": "weapon",
+      "name": "兵装",
+      "glyph": "|",
+      "color": "white",
+      "slot": "weapon",
+      "stack": false,
+      "spoiler": 1,
+      "span": 20
+    },
+    {
+      "id": "launcher",
+      "name": "射出器",
+      "glyph": "}",
+      "color": "lgray",
+      "slot": "launcher",
+      "stack": false,
+      "spoiler": 1,
+      "span": 20
+    },
+    {
+      "id": "ammo",
+      "name": "弾体",
+      "glyph": "{",
+      "color": "gray",
+      "slot": null,
+      "stack": true,
+      "spoiler": 1,
+      "span": 25
+    },
+    {
+      "id": "suit",
+      "name": "スーツ",
+      "glyph": "[",
+      "color": "lgray",
+      "slot": "body",
+      "stack": false,
+      "spoiler": 1,
+      "span": 20
+    },
+    {
+      "id": "plate",
+      "name": "装甲板",
+      "glyph": "]",
+      "color": "gray",
+      "slot": "plate",
+      "stack": false,
+      "spoiler": 1,
+      "span": 20
+    },
+    {
+      "id": "light",
+      "name": "ライト",
+      "glyph": "~",
+      "color": "yellow",
+      "slot": "light",
+      "stack": false,
+      "spoiler": 1,
+      "span": 25
+    },
+    {
+      "id": "implant",
+      "name": "インプラント",
+      "glyph": "=",
+      "color": "cyan",
+      "slot": "implant",
+      "stack": false,
+      "spoiler": 1,
+      "span": 25
+    },
+    {
+      "id": "neurallink",
+      "name": "ニューラルリンク",
+      "glyph": "\"",
+      "color": "magenta",
+      "slot": "neck",
+      "stack": false,
+      "spoiler": 1,
+      "span": 25
+    },
+    {
+      "id": "ampule",
+      "name": "アンプル",
+      "glyph": "!",
+      "color": "red",
+      "slot": null,
+      "stack": true,
+      "spoiler": 1,
+      "span": 45
+    },
+    {
+      "id": "protocol",
+      "name": "プロトコル",
+      "glyph": "?",
+      "color": "white",
+      "slot": null,
+      "stack": true,
+      "spoiler": 1,
+      "span": 45
+    },
+    {
+      "id": "emitter",
+      "name": "射出器",
+      "glyph": "/",
+      "color": "orange",
+      "slot": null,
+      "stack": false,
+      "spoiler": 1,
+      "span": 999
+    },
+    {
+      "id": "ration",
+      "name": "携行食",
+      "glyph": ",",
+      "color": "dyellow",
+      "slot": null,
+      "stack": true,
+      "spoiler": 1,
+      "span": 999
+    },
+    {
+      "id": "cell",
+      "name": "セル",
+      "glyph": "*",
+      "color": "cyan",
+      "slot": null,
+      "stack": true,
+      "spoiler": 1,
+      "span": 999
+    },
+    {
+      "id": "credit",
+      "name": "クレジット",
+      "glyph": "$",
+      "color": "yellow",
+      "slot": null,
+      "stack": true,
+      "spoiler": 1,
+      "span": 999
+    },
+    {
+      "id": "fragment",
+      "name": "ログ断片",
+      "glyph": "?",
+      "color": "yellow",
+      "slot": null,
+      "stack": false,
+      "spoiler": 1,
+      "span": 25
+    }
+  ]
+}

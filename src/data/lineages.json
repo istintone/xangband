@@ -1,0 +1,85 @@
+{
+  "_comment": [
+    "系統 (docs/03 §3.2)。本家 p_race.txt に対応。",
+    "stats … 能力値補正。hitDie … ヒットダイス(ロールぶんと合算)。",
+    "expFactor … 必要経験値の倍率(%)。強い系統ほど成長が遅い。",
+    "skills … 命中/射撃/隠密/知覚/解錠 の基礎補正。",
+    "flags … NO_POISON 毒無効 / NO_RAD 被曝無効 / NO_FOOD 食事不要 / CELL_DRIVEN セル駆動",
+    "        SEAL_INNATE 素で気密 / TAINT_RESIST 汚染に強い / EXTRA_IMPLANT インプラント枠+1",
+    "        INFRA_n 暗視半径 / RANDOM_STATS 能力値がラン毎に変動"
+  ],
+  "entries": [
+    {
+      "id": "terran", "name": "地球系人類",
+      "stats": { "str": 0, "int": 0, "wis": 0, "dex": 0, "con": 0, "chr": 0 },
+      "hitDie": 10, "expFactor": 100, "infra": 0,
+      "skills": { "melee": 0, "shoot": 0, "stealth": 0, "perception": 0, "disarm": 0 },
+      "flags": [],
+      "desc": "断絶前と変わらない身体。何にも秀でないが、何にも足を引っ張られない。成長が最も速い。",
+      "spoiler": 1
+    },
+    {
+      "id": "heavyworlder", "name": "重力適応体",
+      "stats": { "str": 3, "int": -1, "wis": 0, "dex": -2, "con": 2, "chr": -1 },
+      "hitDie": 13, "expFactor": 115, "infra": 0,
+      "skills": { "melee": 5, "shoot": -3, "stealth": -2, "perception": 0, "disarm": -2 },
+      "flags": [],
+      "desc": "高重力環境で生まれ育った。重い装備を苦にせず、押し負けない。細かい作業は苦手。",
+      "spoiler": 1
+    },
+    {
+      "id": "voidborn", "name": "軌道生まれ",
+      "stats": { "str": -2, "int": 1, "wis": 0, "dex": 3, "con": -2, "chr": 0 },
+      "hitDie": 8, "expFactor": 110, "infra": 2,
+      "skills": { "melee": -2, "shoot": 4, "stealth": 3, "perception": 2, "disarm": 2 },
+      "flags": ["SEAL_INNATE"],
+      "desc": "生涯を無重力で過ごした。減圧を恐れない。地面の上では、どこか落ち着かない。",
+      "spoiler": 1
+    },
+    {
+      "id": "synthetic", "name": "合成体",
+      "stats": { "str": 2, "int": 2, "wis": -3, "dex": 0, "con": 1, "chr": -2 },
+      "hitDie": 12, "expFactor": 130, "infra": 3,
+      "skills": { "melee": 2, "shoot": 2, "stealth": -3, "perception": 3, "disarm": 4 },
+      "flags": ["NO_POISON", "NO_RAD", "NO_FOOD", "CELL_DRIVEN"],
+      "desc": "人工の身体。毒も放射線も効かず、食事も要らない。ただし電力が尽きれば止まる。",
+      "spoiler": 1
+    },
+    {
+      "id": "uplift", "name": "拡張知性",
+      "stats": { "str": -1, "int": 1, "wis": 3, "dex": 1, "con": -1, "chr": -1 },
+      "hitDie": 9, "expFactor": 120, "infra": 2,
+      "skills": { "melee": 0, "shoot": 0, "stealth": 4, "perception": 6, "disarm": 1 },
+      "flags": [],
+      "desc": "動物由来の知性化個体。嗅覚が残っており、見えないものの気配を掴む。",
+      "spoiler": 1
+    },
+    {
+      "id": "splice", "name": "改造体",
+      "stats": { "str": 1, "int": -1, "wis": 0, "dex": 0, "con": 3, "chr": -3 },
+      "hitDie": 14, "expFactor": 120, "infra": 1,
+      "skills": { "melee": 3, "shoot": -1, "stealth": -1, "perception": 1, "disarm": -1 },
+      "flags": ["TAINT_RESIST"],
+      "desc": "生体改造の産物。汚染に強く、変異が利点に転ぶことがある。人には嫌われる。",
+      "spoiler": 1
+    },
+    {
+      "id": "chromed", "name": "義体化人類",
+      "stats": { "str": 2, "int": 1, "wis": -2, "dex": 2, "con": 0, "chr": -1 },
+      "hitDie": 11, "expFactor": 125, "infra": 3,
+      "skills": { "melee": 2, "shoot": 3, "stealth": -2, "perception": 2, "disarm": 3 },
+      "flags": ["EXTRA_IMPLANT"],
+      "desc": "大半を機械に置き換えている。インプラントをもう1つ挿せる。",
+      "spoiler": 1
+    },
+    {
+      "id": "anomaly", "name": "未登録個体",
+      "stats": { "str": 0, "int": 0, "wis": 0, "dex": 0, "con": 0, "chr": 0 },
+      "hitDie": 10, "expFactor": 145, "infra": 2,
+      "skills": { "melee": 0, "shoot": 0, "stealth": 0, "perception": 0, "disarm": 0 },
+      "flags": ["RANDOM_STATS"],
+      "desc": "出自不明。断絶前の何か。能力値はランごとに大きく振れる。当たれば強い。",
+      "spoiler": 2
+    }
+  ]
+}

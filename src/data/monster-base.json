@@ -1,0 +1,64 @@
+{
+  "_comment": "敵の系統 (docs/03 §3.4)。個々の敵は monsters.json。本家 monster_base.txt に対応。",
+  "entries": [
+    {
+      "id": "infested",
+      "name": "感染体",
+      "glyph": "i",
+      "color": "green",
+      "desc": "変異した元乗員。群れ、汚染を撒き、近接でしか戦えない。",
+      "spoiler": 1,
+      "traits": [
+        "group",
+        "melee"
+      ]
+    },
+    {
+      "id": "automata",
+      "name": "自律機械",
+      "glyph": "d",
+      "color": "cyan",
+      "desc": "保守と警備のために作られ、今も命令を実行し続けている機械。装甲が厚い。",
+      "spoiler": 1,
+      "traits": [
+        "armored",
+        "no-fear"
+      ]
+    },
+    {
+      "id": "xeno",
+      "name": "異星生物",
+      "glyph": "x",
+      "color": "magenta",
+      "desc": "遺跡に棲みついた、あるいは遺跡そのものが生んだ生物。挙動が読めない。",
+      "spoiler": 1,
+      "traits": [
+        "erratic"
+      ]
+    },
+    {
+      "id": "human",
+      "name": "人間",
+      "glyph": "p",
+      "color": "white",
+      "desc": "略奪者、企業保安、あるいは何かを信じている者たち。装備を持っている。",
+      "spoiler": 1,
+      "traits": [
+        "drops-gear",
+        "calls-help"
+      ]
+    },
+    {
+      "id": "aberrant",
+      "name": "異常",
+      "glyph": "A",
+      "color": "orange",
+      "desc": "分類できないもの。断絶の残滓。深部にしか現れない。",
+      "spoiler": 2,
+      "slayable": false,
+      "traits": [
+        "deep"
+      ]
+    }
+  ]
+}

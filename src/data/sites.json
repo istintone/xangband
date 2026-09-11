@@ -1,0 +1,351 @@
+{
+  "_comment": [
+    "サイト定義 (docs/08 §8.7, docs/10 §10.5)。本作独自。",
+    "",
+    "env    … 7つの環境値 (docs/08 §8.3)。省略した値は標準。",
+    "gen    … 生成パラメータ。gen-common.js の DEFAULTS を上書きする。",
+    "look   … 見た目の差し替え。壁/床のグリフと色。生成器を書かずに印象を変える。",
+    "weight … 敵/アイテムの出やすさ。base ごとの倍率。1.0 が標準、0 で出ない。",
+    "rooms  … 好んで出る区画テンプレートの id。ここに無いものは出にくい。",
+    "signature … そのサイトだけの機構 (docs/10 §10.2)。",
+    "adaptation … 最深部で得られる《適合》(docs/07 §7.2)。",
+    "termChance … 端末が置かれる確率 (docs/11 §11.3)。機械のある場所ほど高い"
+  ],
+  "entries": [
+    {
+      "id": "ark",
+      "name": "漂流艦《方舟》",
+      "short": "方舟",
+      "depthMin": 1,
+      "depthMax": 40,
+      "desc": "低軌道を回り続ける巨大船。区画ごとに気圧が違う。",
+      "enterText": "隔壁が軋んでいる。",
+      "signature": "pressure",
+      "adaptation": "vacuum",
+      "env": {
+        "atmosphere": 35,
+        "temperature": -30,
+        "radiation": 1,
+        "contamination": 3,
+        "gravity": 0.3,
+        "surveillance": 1,
+        "ambient": 0
+      },
+      "gen": {
+        "w": 110,
+        "h": 46,
+        "block": 11,
+        "roomChance": 0.8,
+        "roomMin": 4,
+        "roomMax": 9,
+        "doorChance": 0.55,
+        "litRoomChance": 0.55,
+        "extraTunnels": 1,
+        "trapChance": 0.4
+      },
+      "look": {
+        "wall": {
+          "ch": "#",
+          "lit": "gray",
+          "mem": "dgray"
+        },
+        "floor": {
+          "ch": ".",
+          "lit": "lgray",
+          "mem": "dgray"
+        },
+        "door": {
+          "ch": "+",
+          "lit": "orange",
+          "mem": "dyellow"
+        }
+      },
+      "weight": {
+        "infested": 1.6,
+        "automata": 1.3,
+        "human": 0.7,
+        "xeno": 0.6,
+        "aberrant": 0.8
+      },
+      "rooms": [
+        "r-medbay",
+        "r-engine",
+        "r-bridge",
+        "r-quarters",
+        "r-morgue",
+        "r-foundry",
+        "r-conduit",
+        "r-observation"
+      ],
+      "spoiler": 1,
+      "termChance": 0.65
+    },
+    {
+      "id": "ash",
+      "name": "灰の地表",
+      "short": "灰",
+      "depthMin": 1,
+      "depthMax": 30,
+      "desc": "《灰》の地表。恒星風が直撃し、昼夜で世界が変わる。",
+      "enterText": "灰が降っている。",
+      "signature": "daynight",
+      "adaptation": "radiation",
+      "env": {
+        "atmosphere": 45,
+        "temperature": 10,
+        "radiation": 5,
+        "contamination": 1,
+        "gravity": 1.0,
+        "surveillance": 0,
+        "ambient": 2
+      },
+      "gen": {
+        "w": 130,
+        "h": 52,
+        "block": 13,
+        "roomChance": 0.55,
+        "roomMin": 5,
+        "roomMax": 12,
+        "doorChance": 0.08,
+        "litRoomChance": 1.0,
+        "extraTunnels": 5,
+        "trapChance": 0.15,
+        "openness": 0.35
+      },
+      "look": {
+        "wall": {
+          "ch": "%",
+          "lit": "dyellow",
+          "mem": "dgray"
+        },
+        "floor": {
+          "ch": ".",
+          "lit": "gray",
+          "mem": "dgray"
+        },
+        "door": {
+          "ch": "'",
+          "lit": "dyellow",
+          "mem": "dgray"
+        }
+      },
+      "weight": {
+        "human": 1.8,
+        "xeno": 1.2,
+        "infested": 0.8,
+        "automata": 0.6,
+        "aberrant": 0.5
+      },
+      "rooms": [
+        "r-quarters",
+        "r-hangar",
+        "r-hydroponics",
+        "r-observation"
+      ],
+      "spoiler": 1,
+      "termChance": 0.2
+    },
+    {
+      "id": "ruins",
+      "name": "異星遺跡",
+      "short": "遺跡",
+      "depthMin": 10,
+      "depthMax": 60,
+      "desc": "《灰》の地殻の下。人が作ったのではない構造。光が無い。",
+      "enterText": "光が全く無い。",
+      "signature": "dark",
+      "adaptation": "contamination",
+      "env": {
+        "atmosphere": 55,
+        "temperature": 68,
+        "radiation": 3,
+        "contamination": 7,
+        "gravity": 1.1,
+        "surveillance": 0,
+        "ambient": 0
+      },
+      "gen": {
+        "w": 120,
+        "h": 50,
+        "block": 9,
+        "roomChance": 0.68,
+        "roomMin": 3,
+        "roomMax": 8,
+        "doorChance": 0.1,
+        "litRoomChance": 0.0,
+        "extraTunnels": 6,
+        "trapChance": 0.45,
+        "irregular": 0.5
+      },
+      "look": {
+        "wall": {
+          "ch": "%",
+          "lit": "magenta",
+          "mem": "dgray"
+        },
+        "floor": {
+          "ch": ",",
+          "lit": "dgreen",
+          "mem": "dgray"
+        },
+        "door": {
+          "ch": "+",
+          "lit": "magenta",
+          "mem": "dgray"
+        }
+      },
+      "weight": {
+        "xeno": 2.0,
+        "aberrant": 1.5,
+        "infested": 1.0,
+        "automata": 0.4,
+        "human": 0.2
+      },
+      "rooms": [
+        "r-reactor",
+        "r-morgue",
+        "r-engine",
+        "r-cradle",
+        "r-archive",
+        "r-hydroponics"
+      ],
+      "spoiler": 1,
+      "termChance": 0.05
+    },
+    {
+      "id": "spire",
+      "name": "超高層《尖塔》",
+      "short": "尖塔",
+      "depthMin": 20,
+      "depthMax": 80,
+      "desc": "地表から空へ伸びる居住塔。環境は安全。まだ人がいる。",
+      "enterText": "空調が動いている。誰かが維持している。",
+      "signature": "surveillance",
+      "adaptation": "watch",
+      "env": {
+        "atmosphere": 95,
+        "temperature": 22,
+        "radiation": 0,
+        "contamination": 0,
+        "gravity": 1.0,
+        "surveillance": 7,
+        "ambient": 2
+      },
+      "gen": {
+        "w": 74,
+        "h": 66,
+        "block": 10,
+        "roomChance": 0.85,
+        "roomMin": 3,
+        "roomMax": 7,
+        "doorChance": 0.45,
+        "litRoomChance": 0.95,
+        "extraTunnels": 2,
+        "trapChance": 0.25
+      },
+      "look": {
+        "wall": {
+          "ch": "|",
+          "lit": "blue",
+          "mem": "dblue"
+        },
+        "floor": {
+          "ch": ".",
+          "lit": "lgray",
+          "mem": "dgray"
+        },
+        "door": {
+          "ch": "+",
+          "lit": "cyan",
+          "mem": "dblue"
+        }
+      },
+      "weight": {
+        "human": 2.2,
+        "automata": 1.6,
+        "aberrant": 0.6,
+        "infested": 0.3,
+        "xeno": 0.3
+      },
+      "rooms": [
+        "r-quarters",
+        "r-bridge",
+        "r-medbay",
+        "r-archive",
+        "r-observation",
+        "r-conduit"
+      ],
+      "spoiler": 1,
+      "termChance": 0.9
+    },
+    {
+      "id": "origin",
+      "name": "《起源》",
+      "short": "起源",
+      "depthMin": 80,
+      "depthMax": 100,
+      "desc": "地殻より下。4つの場所が同じだった理由がここにある。",
+      "enterText": "ここは、どのサイトにも似ている。",
+      "signature": "converge",
+      "adaptation": null,
+      "env": {
+        "atmosphere": 20,
+        "temperature": 70,
+        "radiation": 8,
+        "contamination": 8,
+        "gravity": 1.4,
+        "surveillance": 9,
+        "ambient": 0
+      },
+      "gen": {
+        "w": 120,
+        "h": 50,
+        "block": 11,
+        "roomChance": 0.75,
+        "roomMin": 4,
+        "roomMax": 10,
+        "doorChance": 0.3,
+        "litRoomChance": 0.2,
+        "extraTunnels": 4,
+        "trapChance": 0.5,
+        "irregular": 0.3
+      },
+      "look": {
+        "wall": {
+          "ch": "#",
+          "lit": "orange",
+          "mem": "dred"
+        },
+        "floor": {
+          "ch": ".",
+          "lit": "dyellow",
+          "mem": "dgray"
+        },
+        "door": {
+          "ch": "+",
+          "lit": "red",
+          "mem": "dred"
+        }
+      },
+      "weight": {
+        "aberrant": 2.5,
+        "automata": 1.2,
+        "xeno": 1.0,
+        "infested": 0.8,
+        "human": 0.4
+      },
+      "rooms": [
+        "r-reactor",
+        "r-bridge",
+        "r-engine",
+        "r-morgue",
+        "r-assembly",
+        "r-conduit",
+        "r-cradle",
+        "r-foundry"
+      ],
+      "spoiler": 3,
+      "termChance": 0.55
+    }
+  ]
+}

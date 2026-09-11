@@ -1,0 +1,79 @@
+{
+  "_comment": [
+    "電脳層の操作 (docs/11 §11.3)。端末の上で J。",
+    "cost … 認知の消費。fail は失敗時の追加消費 (操作は起きない)。",
+    "ice  … ICE 難度の基礎値。実際の難度 = ice + 深度/3。",
+    "sites … その操作が効くサイト。null なら全サイト。",
+    "★原則: どれも物理面に反映される。ネット面で完結する操作は作らない。",
+    "★原則: 効果は「今この階」に閉じる。永続する効果はここに置かない。"
+  ],
+  "entries": [
+    {
+      "id": "n-map",
+      "name": "区画図を引く",
+      "desc": "保守用の見取り図が残っている。歩かずに階の形が分かる。",
+      "effect": "map",
+      "cost": 2,
+      "fail": 1,
+      "ice": 10,
+      "sites": null,
+      "spoiler": 1
+    },
+    {
+      "id": "n-manifest",
+      "name": "在庫目録を開く",
+      "desc": "この階に何が残されているかの記録。誰も取りに来ない。",
+      "effect": "manifest",
+      "cost": 3,
+      "fail": 2,
+      "ice": 18,
+      "sites": null,
+      "spoiler": 1
+    },
+    {
+      "id": "n-bulkhead",
+      "name": "隔壁を開ける",
+      "desc": "全ての隔壁扉に開放信号を送る。方舟では気圧が動く。",
+      "effect": "bulkhead",
+      "cost": 4,
+      "fail": 3,
+      "ice": 26,
+      "sites": [
+        "ark",
+        "spire",
+        "origin"
+      ],
+      "spoiler": 1
+    },
+    {
+      "id": "n-blind",
+      "name": "監視を切る",
+      "desc": "走査系に自己診断を走らせる。診断中は何も見ていない。",
+      "effect": "blind",
+      "cost": 5,
+      "fail": 4,
+      "ice": 32,
+      "sites": [
+        "spire",
+        "ark",
+        "origin"
+      ],
+      "spoiler": 1
+    },
+    {
+      "id": "n-seize",
+      "name": "自律防衛を掌握",
+      "desc": "見えている機械に停止命令を通す。命令系統はまだ生きる。",
+      "effect": "seize",
+      "cost": 7,
+      "fail": 5,
+      "ice": 40,
+      "sites": [
+        "spire",
+        "ark",
+        "origin"
+      ],
+      "spoiler": 2
+    }
+  ]
+}

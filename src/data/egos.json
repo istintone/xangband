@@ -1,0 +1,767 @@
+{
+  "_comment": [
+    "改修品(エゴ) (docs/02 §2.8)。本家 ego_item.txt に対応。",
+    "bases … 付けられるアイテム大分類。sigils … 付与する刻印。",
+    "toHit/toDam/ac … 数値ボーナス。pval … 刻印の強さ(能力値+N など)。",
+    "depth/rarity … 出現テーブル。taint があると汚染ファーム付き(利点も大きい)。"
+  ],
+  "entries": [
+    {
+      "id": "e-sharp",
+      "name": "研磨",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 1,
+      "rarity": 1,
+      "toHit": 3,
+      "toDam": 3,
+      "sigils": [],
+      "cost": 200,
+      "spoiler": 1,
+      "desc": "刃を立て直しただけ。だが確かに切れる。"
+    },
+    {
+      "id": "e-balanced",
+      "name": "調律",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 4,
+      "rarity": 2,
+      "toHit": 6,
+      "toDam": 2,
+      "sigils": [
+        "s-dex"
+      ],
+      "pval": 1,
+      "cost": 700,
+      "spoiler": 1,
+      "desc": "重心が手に馴染む。"
+    },
+    {
+      "id": "e-incendiary",
+      "name": "焼夷",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 8,
+      "rarity": 3,
+      "toHit": 3,
+      "toDam": 4,
+      "sigils": [
+        "s-brand-fire"
+      ],
+      "cost": 1800,
+      "spoiler": 1
+    },
+    {
+      "id": "e-cryo",
+      "name": "冷却",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 8,
+      "rarity": 3,
+      "toHit": 3,
+      "toDam": 4,
+      "sigils": [
+        "s-brand-cold"
+      ],
+      "cost": 1800,
+      "spoiler": 1
+    },
+    {
+      "id": "e-arc",
+      "name": "帯電",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 12,
+      "rarity": 3,
+      "toHit": 4,
+      "toDam": 5,
+      "sigils": [
+        "s-brand-elec"
+      ],
+      "cost": 2400,
+      "spoiler": 1
+    },
+    {
+      "id": "e-antimachine",
+      "name": "対機械",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 6,
+      "rarity": 2,
+      "toHit": 3,
+      "toDam": 3,
+      "sigils": [
+        "s-slay-automata"
+      ],
+      "cost": 1200,
+      "spoiler": 1
+    },
+    {
+      "id": "e-antixeno",
+      "name": "対異星",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 14,
+      "rarity": 3,
+      "toHit": 4,
+      "toDam": 4,
+      "sigils": [
+        "s-slay-xeno"
+      ],
+      "cost": 2000,
+      "spoiler": 1
+    },
+    {
+      "id": "e-brutal",
+      "name": "重装",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 18,
+      "rarity": 4,
+      "toHit": -3,
+      "toDam": 12,
+      "sigils": [
+        "s-str"
+      ],
+      "pval": 2,
+      "cost": 3500,
+      "spoiler": 2,
+      "desc": "扱いにくいが、当たれば終わる。"
+    },
+    {
+      "id": "e-executioner",
+      "name": "処断",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 28,
+      "rarity": 6,
+      "toHit": 8,
+      "toDam": 10,
+      "sigils": [
+        "s-slay-human",
+        "s-brand-elec"
+      ],
+      "cost": 9000,
+      "spoiler": 2
+    },
+    {
+      "id": "e-reinforced",
+      "name": "補強",
+      "bases": [
+        "suit",
+        "plate"
+      ],
+      "depth": 1,
+      "rarity": 1,
+      "ac": 4,
+      "sigils": [],
+      "cost": 150,
+      "spoiler": 1
+    },
+    {
+      "id": "e-sealed",
+      "name": "密閉",
+      "bases": [
+        "suit"
+      ],
+      "depth": 5,
+      "rarity": 2,
+      "ac": 3,
+      "sigils": [
+        "s-seal"
+      ],
+      "pval": 3,
+      "cost": 800,
+      "spoiler": 1,
+      "desc": "減圧区画で息ができる。"
+    },
+    {
+      "id": "e-insulated",
+      "name": "断熱",
+      "bases": [
+        "suit",
+        "plate"
+      ],
+      "depth": 7,
+      "rarity": 2,
+      "ac": 4,
+      "sigils": [
+        "s-res-fire",
+        "s-res-cold"
+      ],
+      "cost": 1200,
+      "spoiler": 1
+    },
+    {
+      "id": "e-shielded",
+      "name": "遮蔽",
+      "bases": [
+        "suit"
+      ],
+      "depth": 12,
+      "rarity": 3,
+      "ac": 6,
+      "sigils": [
+        "s-res-rad",
+        "s-res-acid"
+      ],
+      "cost": 2200,
+      "spoiler": 1
+    },
+    {
+      "id": "e-servo",
+      "name": "補助駆動",
+      "bases": [
+        "suit"
+      ],
+      "depth": 22,
+      "rarity": 6,
+      "ac": 5,
+      "sigils": [
+        "s-speed"
+      ],
+      "pval": 3,
+      "cost": 12000,
+      "spoiler": 2,
+      "desc": "速度が上がる。これが出た階は当たりだ。"
+    },
+    {
+      "id": "e-hardened",
+      "name": "硬化",
+      "bases": [
+        "plate"
+      ],
+      "depth": 10,
+      "rarity": 2,
+      "ac": 9,
+      "sigils": [],
+      "cost": 900,
+      "spoiler": 1
+    },
+    {
+      "id": "e-bright",
+      "name": "増光",
+      "bases": [
+        "light"
+      ],
+      "depth": 2,
+      "rarity": 1,
+      "sigils": [
+        "s-light"
+      ],
+      "pval": 1,
+      "cost": 400,
+      "spoiler": 1
+    },
+    {
+      "id": "e-frugal",
+      "name": "省電",
+      "bases": [
+        "light"
+      ],
+      "depth": 6,
+      "rarity": 2,
+      "sigils": [
+        "s-efficiency"
+      ],
+      "pval": 2,
+      "cost": 600,
+      "spoiler": 1
+    },
+    {
+      "id": "e-neural",
+      "name": "神経接続",
+      "bases": [
+        "implant",
+        "neurallink"
+      ],
+      "depth": 8,
+      "rarity": 3,
+      "sigils": [
+        "s-int"
+      ],
+      "pval": 2,
+      "cost": 1500,
+      "spoiler": 1
+    },
+    {
+      "id": "e-autonomic",
+      "name": "自律制御",
+      "bases": [
+        "implant",
+        "neurallink"
+      ],
+      "depth": 15,
+      "rarity": 4,
+      "sigils": [
+        "s-freeact"
+      ],
+      "cost": 3000,
+      "spoiler": 1,
+      "desc": "麻痺しない。深部で生き延びるための最低条件。"
+    },
+    {
+      "id": "e-metabolic",
+      "name": "代謝制御",
+      "bases": [
+        "implant"
+      ],
+      "depth": 11,
+      "rarity": 3,
+      "sigils": [
+        "s-regen",
+        "s-con"
+      ],
+      "pval": 2,
+      "cost": 2000,
+      "spoiler": 1
+    },
+    {
+      "id": "e-tainted-power",
+      "name": "暴走出力",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 9,
+      "rarity": 3,
+      "toHit": 2,
+      "toDam": 14,
+      "sigils": [
+        "s-brand-fire"
+      ],
+      "taint": [
+        "t-drain"
+      ],
+      "cost": 2200,
+      "spoiler": 2,
+      "desc": "出力が制御されていない。強い。そしてセルを食い潰す。"
+    },
+    {
+      "id": "e-tainted-carapace",
+      "name": "異形装甲",
+      "bases": [
+        "suit"
+      ],
+      "depth": 13,
+      "rarity": 4,
+      "ac": 18,
+      "sigils": [
+        "s-res-pois",
+        "s-con"
+      ],
+      "pval": 3,
+      "taint": [
+        "t-slow"
+      ],
+      "cost": 2600,
+      "spoiler": 2,
+      "desc": "極めて硬い。そして重く、遅い。"
+    },
+    {
+      "id": "e-tainted-beacon",
+      "name": "発信機付き",
+      "bases": [
+        "neurallink"
+      ],
+      "depth": 10,
+      "rarity": 4,
+      "sigils": [
+        "s-wis",
+        "s-seeinvis"
+      ],
+      "pval": 3,
+      "taint": [
+        "t-noise"
+      ],
+      "cost": 1800,
+      "spoiler": 2,
+      "desc": "よく見える。向こうからも、よく見えている。"
+    },
+    {
+      "id": "e-resonant",
+      "name": "共振",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 33,
+      "rarity": 4,
+      "cost": 14000,
+      "toHit": 7,
+      "toDam": 9,
+      "pval": 2,
+      "sigils": [
+        "s-brand-cold",
+        "s-dex"
+      ],
+      "desc": "振るたびに刃が鳴る。鳴っている間は手が冴える。",
+      "spoiler": 2
+    },
+    {
+      "id": "e-purifier",
+      "name": "浄滅",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 40,
+      "rarity": 5,
+      "cost": 26000,
+      "toHit": 10,
+      "toDam": 11,
+      "sigils": [
+        "s-slay-infested",
+        "s-brand-fire",
+        "s-res-pois"
+      ],
+      "desc": "感染体を焼き切るために作られた。焼く対象を確認しない。",
+      "spoiler": 2
+    },
+    {
+      "id": "e-overclocked",
+      "name": "過駆動",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 48,
+      "rarity": 6,
+      "cost": 42000,
+      "toHit": 6,
+      "toDam": 16,
+      "pval": 2,
+      "sigils": [
+        "s-speed"
+      ],
+      "taint": [
+        "t-drain"
+      ],
+      "desc": "速くなる。電力の減りも速くなる。",
+      "spoiler": 2
+    },
+    {
+      "id": "e-voidedge",
+      "name": "虚刃",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 58,
+      "rarity": 6,
+      "cost": 68000,
+      "toHit": 14,
+      "toDam": 14,
+      "sigils": [
+        "s-brand-cold",
+        "s-res-psi"
+      ],
+      "desc": "分類できないものを切ろうとして作られた形。分類をやめたら切れた。",
+      "spoiler": 3
+    },
+    {
+      "id": "e-unmaking",
+      "name": "解体",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 72,
+      "rarity": 7,
+      "cost": 120000,
+      "toHit": 16,
+      "toDam": 22,
+      "pval": 3,
+      "sigils": [
+        "s-slay-automata",
+        "s-brand-acid",
+        "s-str"
+      ],
+      "taint": [
+        "t-fragile"
+      ],
+      "desc": "作られたものを作られる前へ戻す。持ち手も作られたものだ。",
+      "spoiler": 3
+    },
+    {
+      "id": "e-process",
+      "name": "工程",
+      "bases": [
+        "weapon"
+      ],
+      "depth": 88,
+      "rarity": 8,
+      "cost": 220000,
+      "toHit": 22,
+      "toDam": 26,
+      "pval": 3,
+      "sigils": [
+        "s-speed",
+        "s-brand-fire",
+        "s-res-rad"
+      ],
+      "taint": [
+        "t-hunger"
+      ],
+      "desc": "切ることが工程として登録されている。止める手続きが無い。",
+      "spoiler": 3
+    },
+    {
+      "id": "e-layered",
+      "name": "多層",
+      "bases": [
+        "suit",
+        "plate"
+      ],
+      "depth": 32,
+      "rarity": 4,
+      "cost": 16000,
+      "ac": 12,
+      "sigils": [
+        "s-res-fire",
+        "s-res-cold"
+      ],
+      "desc": "層を重ねて熱を逃がす。重い。",
+      "spoiler": 1
+    },
+    {
+      "id": "e-hermetic",
+      "name": "完全密閉",
+      "bases": [
+        "suit"
+      ],
+      "depth": 44,
+      "rarity": 5,
+      "cost": 34000,
+      "ac": 14,
+      "pval": 2,
+      "sigils": [
+        "s-seal",
+        "s-res-pois"
+      ],
+      "desc": "外気を一切通さない。内側の空気も出ていかない。",
+      "spoiler": 2
+    },
+    {
+      "id": "e-warded",
+      "name": "遮蔽装甲",
+      "bases": [
+        "suit",
+        "plate"
+      ],
+      "depth": 54,
+      "rarity": 6,
+      "cost": 56000,
+      "ac": 20,
+      "pval": 2,
+      "sigils": [
+        "s-res-rad",
+        "s-res-psi",
+        "s-stealth"
+      ],
+      "desc": "見つかりにくく、蝕まれにくい。動きは鈍る。",
+      "spoiler": 2
+    },
+    {
+      "id": "e-adaptive",
+      "name": "適応",
+      "bases": [
+        "suit"
+      ],
+      "depth": 66,
+      "rarity": 7,
+      "cost": 98000,
+      "ac": 24,
+      "pval": 3,
+      "sigils": [
+        "s-seal",
+        "s-res-fire",
+        "s-res-acid",
+        "s-con"
+      ],
+      "taint": [
+        "t-slow"
+      ],
+      "desc": "環境に合わせて組み替わる。組み替えている間は動きが鈍る。",
+      "spoiler": 3
+    },
+    {
+      "id": "e-unyielding",
+      "name": "不変",
+      "bases": [
+        "suit",
+        "plate"
+      ],
+      "depth": 84,
+      "rarity": 8,
+      "cost": 190000,
+      "ac": 34,
+      "pval": 3,
+      "sigils": [
+        "s-freeact",
+        "s-res-psi",
+        "s-res-rad",
+        "s-con"
+      ],
+      "desc": "断絶を通り抜けて形を保っている。保ち方は分からない。",
+      "spoiler": 3
+    },
+    {
+      "id": "e-lasting",
+      "name": "持続",
+      "bases": [
+        "light"
+      ],
+      "depth": 30,
+      "rarity": 4,
+      "cost": 9000,
+      "pval": 2,
+      "sigils": [
+        "s-efficiency",
+        "s-light"
+      ],
+      "desc": "電力の食い方が穏やかで、明るい。",
+      "spoiler": 1
+    },
+    {
+      "id": "e-piercing",
+      "name": "貫通照射",
+      "bases": [
+        "light"
+      ],
+      "depth": 52,
+      "rarity": 6,
+      "cost": 44000,
+      "pval": 3,
+      "sigils": [
+        "s-light",
+        "s-seeinvis"
+      ],
+      "desc": "暗さの向こう側まで届く。届いた先が見たいものとは限らない。",
+      "spoiler": 3
+    },
+    {
+      "id": "e-tuned",
+      "name": "調整",
+      "bases": [
+        "launcher"
+      ],
+      "depth": 34,
+      "rarity": 4,
+      "cost": 18000,
+      "toHit": 10,
+      "toDam": 6,
+      "desc": "狙点と着弾が揃っている。当たり前のことが当たり前にできる。",
+      "spoiler": 1
+    },
+    {
+      "id": "e-relentless",
+      "name": "連射",
+      "bases": [
+        "launcher"
+      ],
+      "depth": 56,
+      "rarity": 6,
+      "cost": 62000,
+      "toHit": 8,
+      "toDam": 12,
+      "pval": 2,
+      "sigils": [
+        "s-speed"
+      ],
+      "taint": [
+        "t-drain"
+      ],
+      "desc": "撃ち続けるために作られている。止める理由を持っていない。",
+      "spoiler": 2
+    },
+    {
+      "id": "e-annihilating",
+      "name": "消滅",
+      "bases": [
+        "launcher"
+      ],
+      "depth": 78,
+      "rarity": 7,
+      "cost": 140000,
+      "toHit": 16,
+      "toDam": 20,
+      "sigils": [
+        "s-slay-xeno",
+        "s-brand-acid"
+      ],
+      "taint": [
+        "t-noise"
+      ],
+      "desc": "着弾点が消える。消える音が大きい。",
+      "spoiler": 3
+    },
+    {
+      "id": "e-wired",
+      "name": "配線強化",
+      "bases": [
+        "implant",
+        "neurallink"
+      ],
+      "depth": 36,
+      "rarity": 5,
+      "cost": 22000,
+      "pval": 3,
+      "sigils": [
+        "s-int",
+        "s-dex"
+      ],
+      "desc": "伝達が速くなる。速くなったぶん、余計なものも通る。",
+      "spoiler": 2
+    },
+    {
+      "id": "e-shielded-mind",
+      "name": "思考遮蔽",
+      "bases": [
+        "implant",
+        "neurallink"
+      ],
+      "depth": 60,
+      "rarity": 6,
+      "cost": 78000,
+      "pval": 3,
+      "sigils": [
+        "s-res-psi",
+        "s-wis",
+        "s-freeact"
+      ],
+      "desc": "外から読まれない。内からも出ていかない。",
+      "spoiler": 3
+    },
+    {
+      "id": "e-origin-touched",
+      "name": "《起源》接触",
+      "bases": [
+        "implant",
+        "neurallink",
+        "suit"
+      ],
+      "depth": 92,
+      "rarity": 9,
+      "cost": 280000,
+      "ac": 18,
+      "pval": 4,
+      "sigils": [
+        "s-speed",
+        "s-int",
+        "s-res-psi",
+        "s-regen"
+      ],
+      "taint": [
+        "t-fragile",
+        "t-hunger"
+      ],
+      "desc": "向こう側から手を入れられた痕。強い。返す方法は無い。",
+      "spoiler": 3
+    }
+  ]
+}

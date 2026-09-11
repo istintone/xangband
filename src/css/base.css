@@ -1,0 +1,202 @@
+/* STRATA — GNU GPL v2. 条文は LICENSE、由来は NOTICE.md。 */
+/* STRATA — 基本スタイル。
+   ゲーム本体は Canvas 上の疑似ターミナル(src/js/term.js)。
+   CSS の役目は、端末の**外**に置く枠外UI(操作パネル・凡例HUD)の見た目と配置
+   (docs/09 §9.11, [[D-55]])。 */
+
+:root {
+  --bg: #05070a;
+  --panel: #0b1119;
+  --panel2: #111a25;
+  --frame: #16202c;
+  --ink: #c8d4e0;
+  --dim: #7d8b9a;
+  --accent: #4fa3a8;
+  --warn: #c9a24a;
+  --danger: #c05a4e;
+  --tip: #4fa3a8;
+  --side-w: clamp(12rem, 15vw, 18rem);
+  /* 枠外UI の文字倍率 (docs/09 §9.9)。theme.js が差し替える。
+     端末側は fit() が自動で合わせるので、ここは DOM のパネルにだけ効く。 */
+  --ui-scale: 1;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Consolas", "DejaVu Sans Mono", "Courier New", monospace;
+  overflow: hidden;
+}
+
+/* 枠外UI の文字は --ui-scale に追随する (docs/09 §9.9)。
+   端末側は fit() が自前で合わせるので、ここは DOM のパネルにだけ効く。 */
+
+#app {
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  gap: 1px;
+  background: var(--frame);
+}
+
+/* --- 中央: ゲーム端末 --- */
+#stage {
+  /* basis 0 にする。auto だと canvas の寸法で stage が膨らみ、
+     fit() が stage を測るので寸法が発散しうる。
+     #center(縦 flex) の中で、コンソールの残りを全部取る。 */
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 4px;
+}
+
+#term {
+  display: block;
+  background: var(--bg);
+}
+#term:focus { outline: 1px solid #2b4a6b; }
+
+/* --- 両脇: 枠外UI --- */
+.side {
+  flex: 0 0 var(--side-w);
+  width: var(--side-w);
+  background: var(--panel);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 6px 9px 20px;
+  overflow-wrap: anywhere;
+  font-size: calc(12px * var(--ui-scale));
+  line-height: 1.45;
+  /* 文字を選択できる(不具合報告に貼れる) */
+  user-select: text;
+}
+
+.p-title {
+  font-size: calc(13px * var(--ui-scale));
+  color: var(--accent);
+  letter-spacing: 1px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--frame);
+  margin-bottom: 5px;
+}
+.p-note { color: var(--dim); font-size: calc(11px * var(--ui-scale)); margin-bottom: 6px; }
+
+.p-group { margin-bottom: 6px; }
+.l-sec { margin-bottom: 10px; }
+.p-group h3, .l-sec h3 {
+  font-size: calc(11px * var(--ui-scale));
+  color: var(--dim);
+  font-weight: normal;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+  padding-left: 2px;
+}
+
+/* --- 操作ボタン --- */
+.p-cmd {
+  /* grid にする。flex だと p-sub の 100% 折り返しが効かず、
+     ラベルが1文字ずつ縦に潰れる。 */
+  display: grid;
+  grid-template-columns: 4.4em 1fr;
+  align-items: baseline;
+  column-gap: 6px;
+  width: 100%;
+  text-align: left;
+  background: var(--panel2);
+  color: var(--ink);
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 2px 6px;
+  margin-bottom: 1px;
+  font: inherit;
+  line-height: 1.35;
+  cursor: pointer;
+}
+.p-cmd:hover:not(:disabled) { border-color: var(--accent); background: #16222f; }
+.p-cmd:active:not(:disabled) { background: #1d2c3c; }
+
+.p-key {
+  color: var(--warn);
+  font-size: calc(11px * var(--ui-scale));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.p-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.p-sub {
+  grid-column: 2;           /* ラベルの下に回り込む */
+  color: var(--dim);
+  font-size: calc(10px * var(--ui-scale));
+  line-height: 1.25;
+}
+
+/* 説明だけの行(押せない) */
+.p-cmd.p-info { background: transparent; cursor: default; opacity: .85; }
+/* 今は使えないコマンド */
+.p-cmd.p-off { opacity: .35; }
+
+/* --- 凡例HUD --- */
+.l-row {
+  display: grid;
+  grid-template-columns: 1.4em 1fr;
+  align-items: baseline;
+  column-gap: 6px;
+  padding: 1px 2px;
+}
+.l-glyph { text-align: center; font-weight: bold; }
+.l-stat { grid-column: 1 / -1; color: var(--ink); }
+.l-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.l-detail {
+  grid-column: 2;
+  color: var(--dim);
+  font-size: calc(10px * var(--ui-scale));
+  line-height: 1.3;
+}
+/* 状態の行はグリフが無いので1列 */
+.l-row:has(> .l-stat) { grid-template-columns: 1fr; }
+.l-row:has(> .l-stat) .l-detail { grid-column: 1; padding-left: .8em; }
+
+.l-hint {
+  border-left: 2px solid var(--dim);
+  padding: 3px 6px;
+  margin-bottom: 3px;
+  background: var(--panel2);
+  border-radius: 0 3px 3px 0;
+}
+.l-danger { border-left-color: var(--danger); color: #e2a49c; }
+.l-warn   { border-left-color: var(--warn);   color: #e0cb95; }
+.l-tip    { border-left-color: var(--tip);    color: #9fd4d7; }
+.l-info   { border-left-color: var(--frame);  color: var(--ink); }
+
+/* --- 画面が狭いとき ---
+   縦積みにはしない。端末は 80x40 で横長なので、
+   縦を削られると文字が一気に小さくなる。
+   代わりにパネルを端末の上に**重ねる**(既定は畳んだ状態。起動時に JS が決める)。 */
+/* 900px 以下は console.css が縦積みにする ([[D-87]])。
+   左右に重ねる指定は要らなくなった ―― 重ねると端末の実測が狂う。 */
+
+/* --- パネルを畳む --- */
+#app.hide-panels .side { display: none; }
+
+#toggle {
+  position: fixed;
+  right: 6px;
+  bottom: 6px;
+  z-index: 10;
+  background: var(--panel2);
+  color: var(--dim);
+  border: 1px solid var(--frame);
+  border-radius: 3px;
+  padding: 3px 8px;
+  font: 11px/1.4 inherit;
+  cursor: pointer;
+}
+#toggle:hover { color: var(--ink); border-color: var(--accent); }
