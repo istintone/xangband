@@ -124,6 +124,8 @@
 
 /* --- ガイド: 押せる行動 ([[D-85]]) --- */
 #guide .g-act {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   /* p-cmd と同じ組み。キー / ラベル / 理由 の3列で、理由は折り返す */
   display: grid;
   grid-template-columns: 3.6em 1fr;

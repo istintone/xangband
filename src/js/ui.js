@@ -37,6 +37,40 @@ var UI = (function () {
 
   function letterFor(i) { return LETTERS[i] || '?'; }
 
+  /* --- タップの当たり判定 ([[D-97]]) ---
+   *
+   * 行の矩形は**描いたときに記録する**。別に計算し直すと、
+   * 描画順と選択順がズレる余地が生まれる ([[D-51]] と同じ理由)。
+   * 枠(panel)も記録して、外をタップしたら閉じられるようにする。 */
+  var hits = [];          // { i, x, y, w, h }
+  var frame = null;       // 最後に描いた枠 { x, y, w, h }
+
+  function resetHits() { hits = []; frame = null; }
+
+  /** 行 i の当たり判定を登録する。h は行の高さ(既定1)。 */
+  function hitRow(i, x, y, w, h) {
+    hits.push({ i: i, x: x, y: y, w: w, h: h || 1 });
+  }
+
+  /**
+   * 端末セル (cx, cy) が指している行。
+   * @returns {number} 行index。行の上でなければ -1
+   */
+  function hitAt(cx, cy) {
+    for (var k = 0; k < hits.length; k++) {
+      var r = hits[k];
+      if (cx >= r.x && cx < r.x + r.w && cy >= r.y && cy < r.y + r.h) return r.i;
+    }
+    return -1;
+  }
+
+  /** そのセルは開いている枠の中か。外なら閉じてよい。 */
+  function insideFrame(cx, cy) {
+    if (!frame) return false;
+    return cx >= frame.x && cx < frame.x + frame.w &&
+           cy >= frame.y && cy < frame.y + frame.h;
+  }
+
   /**
    * 幅 w のパネルを、マップ領域の中央に置くときの x。
    * 端末は画面に合わせて横に広がる ([[D-84]]) ので、
@@ -52,6 +86,7 @@ var UI = (function () {
   /* --- 描画部品 --- */
 
   function panel(buf, x, y, w, h, title) {
+    frame = { x: x, y: y, w: w, h: h };      // 外をタップしたら閉じる ([[D-97]])
     for (var yy = y; yy < y + h; yy++) {
       for (var xx = x; xx < x + w; xx++) Render.put(buf, xx, yy, ' ', 'white', 'dgray');
     }
@@ -78,6 +113,7 @@ var UI = (function () {
       Render.text(buf, x + 1, y + 2 + i, on ? '>' : ' ', 'yellow', 'dgray', 1);
       Render.text(buf, x + 2, y + 2 + i, letterFor(i) + ') ' + r.text,
                   on ? 'yellow' : (r.color || 'white'), 'dgray', w - 4);
+      hitRow(i, x, y + 2 + i, w);
     }
     Render.text(buf, x + 2, y + h - 1,
                 hint || '文字 / ↑↓ と Enter / ESC', 'gray', 'dgray', w - 4);
@@ -184,6 +220,7 @@ var UI = (function () {
       var text = letterFor(i) + ') ' + Inventory.SLOT_NAME[s] + ': ' +
                  (it ? Inventory.label(it, W.knowledge) : '—');
       Render.text(buf, x + 2, y + 2 + i, text, it ? 'white' : 'gray', 'dgray', w - 4);
+      hitRow(i, x, y + 2 + i, w);
     }
     var b = W.player.equipBonus || {};
     Render.text(buf, x + 2, y + h - 3,
@@ -218,6 +255,7 @@ var UI = (function () {
                 '  失敗 ' + fail + '%';
       Render.text(buf, x + 2, y + 2 + i, txt,
                   p.sp >= a.cost ? 'white' : 'gray', 'dgray', w - 4);
+      hitRow(i, x, y + 2 + i, w);
     }
     if (known.length === 0) Render.text(buf, x + 2, y + 2, '(まだ何も習得していない)', 'gray', 'dgray', w - 4);
     var canLearn = Ability.learnable(p).length > 0 && Ability.canLearnMore(p);
@@ -247,6 +285,7 @@ var UI = (function () {
       Render.text(buf, x + 2, y + 2 + i,
         letterFor(i) + ') ' + Inventory.label(it, W.knowledge), afford ? 'white' : 'gray', 'dgray', w - 14);
       Render.text(buf, x + w - 11, y + 2 + i, String(price) + ' cr', afford ? 'yellow' : 'gray', 'dgray', 10);
+      hitRow(i, x, y + 2 + i, w);
     }
     if (stock.length === 0) Render.text(buf, x + 2, y + 2, '(在庫切れ)', 'gray', 'dgray', w - 4);
     Render.text(buf, x + 2, y + h - 2, '文字で購入 / s で売却 / ESC', 'gray', 'dgray', w - 4);
@@ -381,6 +420,7 @@ var UI = (function () {
     for (var i = 0; i < list.length; i++) {
       Render.text(buf, x + 2, y + 2 + i, letterFor(i) + ') ' + list[i].name,
                   'white', 'dgray', 22);
+      hitRow(i, x, y + 2 + i, 24);      // 左の一覧だけ。右は説明
     }
     // 選択中の説明とプレビュー
     var sel = list[draft.hover] || list[0];
@@ -486,6 +526,7 @@ var UI = (function () {
 
       var note = s.locked || s.desc;
       Render.text(buf, x + 5, row + 1, note, s.locked ? 'red' : 'dgray', 'dgray', w - 6);
+      hitRow(i, x, row, w, 2);
     }
 
     Render.text(buf, x + 2, y + h - 3,
@@ -590,6 +631,7 @@ var UI = (function () {
       Render.text(buf, x + 25, row, info,
                   e.blocked ? 'gray' : (usable ? 'cyan' : 'red'), 'dgray', w - 26);
       Render.text(buf, x + 4, row + 1, op.desc, 'dgray', 'dgray', w - 5);
+      hitRow(i, x, row, w, 2);
     }
 
     Render.text(buf, x + 2, y + h - 3,
@@ -626,6 +668,7 @@ var UI = (function () {
       Render.text(buf, x + 13, row, a.label,
                   on ? 'yellow' : (LEVEL_COLOR[a.level] || 'white'), 'dgray', w - 15);
       Render.text(buf, x + 13, row + 1, a.why, 'dgray', 'dgray', w - 15);
+      hitRow(i, x, row, w, 2);
     }
     Render.text(buf, x + 2, y + h - 2, 'a) の隣がキー。覚えたら一覧を開かずに押せる。',
                 'gray', 'dgray', w - 4);
@@ -667,6 +710,7 @@ var UI = (function () {
       Render.text(buf, x + 2, row, (on ? '> ' : '  ') + letterFor(i) + ') ' + r.name,
                   on ? 'yellow' : 'white', 'dgray', 26);
       if (r.desc) Render.text(buf, x + 27, row, r.desc, 'gray', 'dgray', w - 29);
+      hitRow(i, x, row, w);
       row++;
     }
     Render.text(buf, x + 2, y + h - 2,
@@ -695,6 +739,7 @@ var UI = (function () {
         letterFor(i) + ') ' + Sigil.name(W.knowledge, it), 'white', 'dgray', 32);
       Render.text(buf, x + 35, y + 2 + i,
         '→ 《' + Craft.sigilLabel(Craft.salvageYield(it)) + '》', 'cyan', 'dgray', w - 37);
+      hitRow(i, x, y + 2 + i, w);
     }
     Render.text(buf, x + 2, y + h - 2, '解体した装備は戻らない。', 'red', 'dgray', w - 4);
     Render.text(buf, x + 2, y + h - 1, '文字で選択 / ESC', 'gray', 'dgray', w - 4);
@@ -715,6 +760,7 @@ var UI = (function () {
       Render.text(buf, x + 2, y + 2 + i,
         letterFor(i) + ') 《' + Craft.sigilLabel(list[i].sigil) + '》 x' + list[i].count,
         'cyan', 'dgray', w - 4);
+      hitRow(i, x, y + 2 + i, w);
     }
     Render.text(buf, x + 2, y + h - 1, '文字で選択 / ESC', 'gray', 'dgray', w - 4);
     return list.map(function (m) { return { id: m.sigil, count: m.count }; });
@@ -738,6 +784,7 @@ var UI = (function () {
         why || ('枠 ' + Craft.grafted(it) + '/' + Craft.MAX_MODULES +
                 '   パーツ ' + Craft.partsNeeded(W, it)),
         why ? 'red' : 'cyan', 'dgray', w - 35);
+      hitRow(i, x, y + 2 + i, w);
     }
     Render.text(buf, x + 2, y + h - 2, '移植は失敗しない。枠は2つまで。', 'gray', 'dgray', w - 4);
     Render.text(buf, x + 2, y + h - 1, '文字で選択 / ESC', 'gray', 'dgray', w - 4);
@@ -804,6 +851,7 @@ var UI = (function () {
    * 一覧は必ず listFor() から取る ([[D-51]])。
    */
   function overlay(buf, W, draft) {
+    resetHits();                     // 当たり判定は毎フレーム作り直す ([[D-97]])
     switch (mode) {
       case 'inventory': return drawList(buf, W, '所持品', listFor(W, mode), itemRow(W));
       case 'use':  return drawList(buf, W, '使う', listFor(W, mode), itemRow(W), '文字で使用 / ESC');
@@ -838,6 +886,7 @@ var UI = (function () {
   return {
     open: open, close: close, current: current, ctx: ctx, isOpen: isOpen,
     cursorAt: cursorAt, moveCursor: moveCursor, setCursor: setCursor,
+    hitAt: hitAt, insideFrame: insideFrame,
     letterFor: letterFor, indexOfLetter: indexOfLetter,
     itemList: itemList, listFor: listFor, itemRow: itemRow,
     displayRows: displayRows, loreIds: loreIds, overlay: overlay,

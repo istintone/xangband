@@ -161,6 +161,25 @@
    *   それ以外 → その場所を注視
    */
   function clickMap(cell) {
+    /* オーバーレイが開いているときは、行をタップして選ぶ ([[D-97]])。
+       **どの判定よりも先に見る** ―― 枠はマップ領域の外にはみ出せるし
+       (店は y=1)、系統選択は W がまだ無い時点で開く。
+       これが無いと携帯では所持品も店も触れず、起動直後が系統選択なので
+       **ゲームを始めることすらできなかった**。
+       入口は handleSelect() ひとつ。文字キーも Enter もここに入る ([[D-57]])。 */
+    if (UI.isOpen() && UI.current() !== 'look') {
+      var row = UI.hitAt(cell.x, cell.y);
+      if (row >= 0) {
+        UI.setCursor(row, UI.listFor(W, UI.current()).length);
+        handleSelect(row);
+      } else if (!UI.insideFrame(cell.x, cell.y)) {
+        exec({ type: 'close' });                 // 枠の外 = ESC の代わり
+        return;                                  // exec が描き直す
+      }
+      redraw();
+      return;
+    }
+
     if (!W || !W.player || W.dead) return;
 
     // 端末セル -> マップ座標
@@ -177,7 +196,6 @@
       redraw();
       return;
     }
-    if (UI.isOpen()) return;                       // 他のメニュー中は無視
 
     var p = W.player;
     var what = Target.at(W, wx, wy);

@@ -380,6 +380,144 @@ function overlayFrame(W) {
   return buf;
 }
 
+console.log('\n[一覧のタップ (docs/09 §9.22)]');
+
+/** overlay を描いて当たり判定を作る。 */
+function overlayFor(W, mode, ctx) {
+  UI.open(mode, ctx);
+  const buf = Render.frame(W);
+  UI.overlay(buf, W, null);
+  return buf;
+}
+
+/** 一覧の全行が、描いた場所をタップして選べるか。 */
+function everyRowHits(W, mode, ctx) {
+  overlayFor(W, mode, ctx);
+  const n = UI.listFor(W, mode).length;
+  const missed = [];
+  for (let i = 0; i < n; i++) {
+    let found = false;
+    // 枠のどこかにその行があるはず。端末全面を走査する
+    for (let y = 0; y < Render.TERM.h && !found; y++) {
+      for (let x = 0; x < Render.TERM.w; x++) {
+        if (UI.hitAt(x, y) === i) { found = true; break; }
+      }
+    }
+    if (!found) missed.push(i);
+  }
+  return { n: n, missed: missed };
+}
+
+t('選択できる一覧は全て、行をタップで選べる ([[D-97]])', () => {
+  /* clickMap に `if (UI.isOpen()) return;` があり、オーバーレイ中の
+     タップが完全に無視されていた。25画面のうち20が選択画面で、
+     携帯では所持品も店も触れなかった。 */
+  const W = Cmd.newGame('tap1');
+  Cmd.enterLevel(W, 0, false);          // 母船 (店が開ける)
+  Cmd.refreshView(W);
+
+  // 中身が要る一覧には物を持たせる
+  const db = Data.get();
+  for (const id of ['medgel', 'pry-bar']) {
+    const kind = db.itemsById[id];
+    if (kind) Inventory.add(W.inv, Item.create(W.rng, kind, 2));
+  }
+  Cmd.recalc(W);
+
+  const modes = ['inventory', 'use', 'wear', 'drop', 'equip', 'site', 'display'];
+  for (const m of modes) {
+    const r = everyRowHits(W, m);
+    if (r.n === 0) continue;            // 空の一覧は対象外
+    eq(r.missed.length, 0, m + ' の行 ' + r.missed.join(',') + ' がタップで選べない');
+  }
+});
+
+t('系統とロールの選択がタップで進む ―― 携帯で開始できる ([[D-97]])', () => {
+  /* 起動直後のモードが lineage なので、ここが触れないと
+     **ゲームを始めることすらできない**。W がまだ無い時点で開くので、
+     当たり判定も W を参照してはいけない。 */
+  for (const mode of ['lineage', 'role']) {
+    UI.open(mode);
+    const buf = Render.frame(null);
+    UI.overlay(buf, null, { lineage: null, role: null, hover: 0 });
+    const n = UI.listFor(null, mode).length;
+    ok(n > 0, mode + ' の選択肢が無い');
+    let hit = 0;
+    for (let y = 0; y < Render.TERM.h; y++) {
+      for (let x = 0; x < Render.TERM.w; x++) if (UI.hitAt(x, y) >= 0) { hit++; break; }
+    }
+    ok(hit >= n, mode + ' のタップ可能な行が ' + hit + ' しかない (選択肢 ' + n + ')');
+  }
+});
+
+t('タップした行と、その場に描かれた行が一致する ([[D-51]])', () => {
+  /* 当たり判定を描画と別に計算すると、順序がズレる余地ができる。
+     カーソルを当たり判定の位置に合わせて、印が動くことで確かめる。 */
+  const W = Cmd.newGame('tap2');
+  Cmd.enterLevel(W, 3, false);
+  Cmd.refreshView(W);
+  const db = Data.get();
+  for (const id of ['medgel', 'pry-bar', 'ration']) {
+    const kind = db.itemsById[id];
+    if (kind) Inventory.add(W.inv, Item.create(W.rng, kind, 1));
+  }
+
+  overlayFor(W, 'inventory');
+  const n = UI.listFor(W, 'inventory').length;
+  if (n < 2) return;
+
+  // 行 i の当たり判定の位置を集める
+  const rowY = [];
+  for (let y = 0; y < Render.TERM.h; y++) {
+    for (let x = 0; x < Render.TERM.w; x++) {
+      const i = UI.hitAt(x, y);
+      if (i >= 0 && rowY[i] === undefined) rowY[i] = y;
+    }
+  }
+  for (let i = 1; i < n; i++) {
+    ok(rowY[i] > rowY[i - 1],
+       '行 ' + i + ' が行 ' + (i - 1) + ' より上にある (描画順と当たり判定がズレている)');
+  }
+});
+
+t('枠の外と中を見分けられる ―― 外タップで閉じる ([[D-97]])', () => {
+  const W = Cmd.newGame('tap3');
+  Cmd.enterLevel(W, 3, false);
+  Cmd.refreshView(W);
+  overlayFor(W, 'inventory');
+
+  // 枠の中に必ず1点ある
+  let inside = 0, outside = 0;
+  for (let y = 0; y < Render.TERM.h; y++) {
+    for (let x = 0; x < Render.TERM.w; x++) {
+      if (UI.insideFrame(x, y)) inside++; else outside++;
+    }
+  }
+  ok(inside > 0, '枠が記録されていない');
+  ok(outside > 0, '画面全部が枠になっている (外タップで閉じられない)');
+  eq(UI.insideFrame(0, Render.TERM.h - 1), false, '左下が枠の中と判定された');
+});
+
+t('閉じると当たり判定が残らない ([[D-97]])', () => {
+  /* 残っていると、閉じた後のマップのタップが一覧の選択として拾われる。 */
+  const W = Cmd.newGame('tap4');
+  Cmd.enterLevel(W, 3, false);
+  Cmd.refreshView(W);
+  overlayFor(W, 'inventory');
+
+  UI.close();
+  const buf = Render.frame(W);
+  UI.overlay(buf, W, null);             // 閉じた状態で描き直す
+  let any = -1;
+  for (let y = 0; y < Render.TERM.h && any < 0; y++) {
+    for (let x = 0; x < Render.TERM.w; x++) {
+      if (UI.hitAt(x, y) >= 0) { any = y; break; }
+    }
+  }
+  eq(any, -1, '閉じたのに当たり判定が残っている (行 y=' + any + ')');
+  eq(UI.insideFrame(5, 5), false, '閉じたのに枠が残っている');
+});
+
 console.log('\n[表示設定 theme.js]');
 
 t('配色を切り替えるとパレットが差し替わる (docs/09 §9.9)', () => {

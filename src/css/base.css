@@ -61,6 +61,13 @@ html, body {
 #term {
   display: block;
   background: var(--bg);
+  /* 指で遊ぶための投定 ([[D-97]])。
+     タップ移動も一覧の選択も**連打が前提**なので、
+     double-tap ズームと長押し選択が入ると成立しない。 */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
 }
 #term:focus { outline: 1px solid #2b4a6b; }
 
@@ -102,6 +109,8 @@ html, body {
 
 /* --- 操作ボタン --- */
 .p-cmd {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   /* grid にする。flex だと p-sub の 100% 折り返しが効かず、
      ラベルが1文字ずつ縦に潰れる。 */
   display: grid;
