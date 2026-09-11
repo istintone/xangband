@@ -374,7 +374,7 @@ var UI = (function () {
   function drawLook(buf, W) {
     var what = Target.at(W, W.cursor.x, W.cursor.y);
     var lines = Target.describe(W, what);
-    var hint = '. 歩く / Tab 次 / t 目標';
+    var hint = '同じマスをもう一度タップで決定  /  . 歩く / Tab 次 / t 目標';
 
     if (!Render.hasSidebar()) {
       // 携帯: 最下段の2行に収める。マップを潰さない
@@ -384,11 +384,13 @@ var UI = (function () {
       return null;
     }
 
-    var y = Render.TERM.h - lines.length - 3;
+    // 案内が4行あるので、説明はその上から始める(重ねると上書きされる)
+    var y = Render.TERM.h - lines.length - 4;
     var w = Render.SIDEBAR_W - 1;
     for (var i = 0; i < lines.length; i++) {
       Render.text(buf, 0, y + i, lines[i], i === 0 ? 'cyan' : 'white', 'black', w);
     }
+    Render.text(buf, 0, Render.TERM.h - 4, '再タップで決定', 'gray', 'black', w);
     Render.text(buf, 0, Render.TERM.h - 3, '. そこへ歩く', 'gray', 'black', w);
     Render.text(buf, 0, Render.TERM.h - 2, 'Tab 次', 'gray', 'black', w);
     Render.text(buf, 0, Render.TERM.h - 1, 't 目標', 'gray', 'black', w);

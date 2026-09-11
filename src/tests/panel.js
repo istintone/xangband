@@ -380,6 +380,79 @@ function overlayFrame(W) {
   return buf;
 }
 
+console.log('\n[マップのタップ (docs/09 §9.22)]');
+
+/* boot.js は shell 層で副作用を持つので読めない。
+   ここでは「タップが何を指すか」を決める材料 ―― 既知かどうか・歩けるか ――
+   が期待どおりに読めることを確かめる。分岐そのものの検査は
+   下の「抜けられないモードを作らない」で行う。 */
+
+t('注視モードは枠を描かないので、外タップでは閉じられない ([[D-98]])', () => {
+  /* だから注視モードには**別の出口**が要る。
+     この前提が変わったら(panel を描くようになったら)、
+     再タップで決定する仕掛けは見直してよい。 */
+  const W = Cmd.newGame('look1');
+  Cmd.enterLevel(W, 3, false);
+  Cmd.refreshView(W);
+  W.cursor = { x: W.player.x, y: W.player.y, index: -1 };
+  UI.open('look');
+
+  const buf = Render.frame(W);
+  UI.overlay(buf, W, null);
+  eq(UI.insideFrame(W.player.x, W.player.y), false,
+     '注視モードが枠を記録している (前提が変わった)');
+  let any = false;
+  for (let y = 0; y < Render.TERM.h && !any; y++) {
+    for (let x = 0; x < Render.TERM.w; x++) if (UI.hitAt(x, y) >= 0) { any = true; break; }
+  }
+  eq(any, false, '注視モードに行の当たり判定がある (前提が変わった)');
+});
+
+t('新しい階は画面のほとんどが未探索 ―― そこが罠だった ([[D-98]])', () => {
+  /* 未探索マスのタップで注視モードに入る実装だったので、
+     「最初の一タップでほぼ確実に抜けられないモードに落ちる」状態だった。
+     どれくらい確実だったのかを数字で残す。 */
+  const W = Cmd.newGame('look2');
+  Cmd.enterLevel(W, 3, false);
+  Cmd.refreshView(W);
+
+  const lv = W.level;
+  let known = 0, total = 0;
+  for (let y = 0; y < lv.h; y++) {
+    for (let x = 0; x < lv.w; x++) {
+      total++;
+      if (World.hasFlag(lv, x, y, World.F.KNOWN)) known++;
+    }
+  }
+  const ratio = known / total;
+  ok(ratio < 0.25,
+     '階に入った直後の既知率が ' + Math.round(ratio * 100) + '% ―― 前提が変わった');
+});
+
+t('注視モードの案内がタップの出口を書いている ([[D-98]])', () => {
+  /* 出口があっても、書いていなければ無いのと同じ。 */
+  const W = Cmd.newGame('look3');
+  Cmd.enterLevel(W, 3, false);
+  Cmd.refreshView(W);
+  W.cursor = { x: W.player.x, y: W.player.y, index: -1 };
+  UI.open('look');
+
+  const buf = Render.frame(W);
+  UI.overlay(buf, W, null);
+
+  /* 全角は1文字が2セルを占める(幅は cell.w)。
+     空セルをそのまま連結すると「タ ッ プ」になって探せない。 */
+  const cols = Render.TERM.w;
+  let text = '';
+  for (let y = 0; y < Render.TERM.h; y++) {
+    for (let x = 0; x < cols; x++) {
+      const c = buf.cells[y * cols + x];
+      if (c && c.ch && c.ch !== ' ') text += c.ch;
+    }
+  }
+  ok(text.indexOf('タップ') !== -1, '案内にタップの出口が書かれていない');
+});
+
 console.log('\n[一覧のタップ (docs/09 §9.22)]');
 
 /** overlay を描いて当たり判定を作る。 */

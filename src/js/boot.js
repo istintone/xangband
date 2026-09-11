@@ -190,8 +190,20 @@
     var wx = o.x + mx, wy = o.y + my;
     if (!World.inBounds(W.level, wx, wy)) return;
 
-    // 注視モード中はカーソルを飛ばす
+    /* 注視モード中は、別のマスならカーソルを飛ばし、
+       **同じマスをもう一度タップしたら決定**する ([[D-98]])。
+       これが無いと、指だけでは注視モードから二度と出られない
+       (`drawLook` は枠を描かないので [[D-97]] の外タップも効かない)。 */
     if (UI.current() === 'look') {
+      if (W.cursor && W.cursor.x === wx && W.cursor.y === wy) {
+        if (World.hasFlag(W.level, wx, wy, World.F.KNOWN) &&
+            World.walkable(W.level, wx, wy)) {
+          exec({ type: 'lookTravel' });            // 歩ける場所なら歩く
+        } else {
+          exec({ type: 'close' });                 // そうでなければ閉じる
+        }
+        return;                                    // exec が描き直す
+      }
       W.cursor.x = wx; W.cursor.y = wy; W.cursor.index = -1;
       redraw();
       return;
@@ -219,8 +231,13 @@
       exec({ type: 'travel', x: wx, y: wy });
       return;
     } else {
-      W.cursor = { x: wx, y: wy, index: -1 };
-      UI.open('look');
+      /* 未探索や壁を指したら、**その方向へ1歩** ([[D-98]])。
+         ここで注視モードを開いていたので、新しい階の最初の一タップで
+         抜けられないモードに落ちていた。1歩は移動と同じコストを払う
+         通常行動なので、[[D-50]] が却下したオートエクスプロアではない ――
+         行き先はプレイヤーが指している ([[D-86]] と同じ理屈)。 */
+      exec({ type: 'move', dx: U.clamp(wx - p.x, -1, 1), dy: U.clamp(wy - p.y, -1, 1) });
+      return;                                      // exec が描き直す
     }
     redraw();
   }
